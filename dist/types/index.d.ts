@@ -994,9 +994,9 @@ export type BunSQLiteConfig = {
      */
     db_schema_file_name: string;
     /**
-     * The Directory for backups
+     * The Directory for backups. Relative to db_dir.
      */
-    db_backup_dir: string;
+    db_backup_dir?: string;
     max_backups?: number;
     /**
      * The Root Directory for the DB file and schema

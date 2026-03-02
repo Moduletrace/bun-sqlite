@@ -37,11 +37,6 @@ export default async function init(): Promise<BunSQLiteConfigReturn> {
             process.exit(1);
         }
 
-        if (!Config.db_backup_dir) {
-            console.error(`\`db_backup_dir\` is required in your config`);
-            process.exit(1);
-        }
-
         let db_dir = ROOT_DIR;
 
         if (Config.db_dir) {
@@ -58,7 +53,10 @@ export default async function init(): Promise<BunSQLiteConfigReturn> {
             "default"
         ] as BUN_SQLITE_DatabaseSchemaType;
 
-        const BackupDir = path.resolve(db_dir, Config.db_backup_dir);
+        const backup_dir =
+            Config.db_backup_dir || AppData["DefaultBackupDirName"];
+
+        const BackupDir = path.resolve(db_dir, backup_dir);
         if (!fs.existsSync(BackupDir)) {
             fs.mkdirSync(BackupDir, { recursive: true });
         }
