@@ -2,6 +2,7 @@
     "name": "@moduletrace/bun-sqlite",
     "version": "1.0.0",
     "description": "SQLite manager for Bun",
+    "author": "Benjamin Toby",
     "main": "dist/index.js",
     "bin": {
         "bun-sqlite": "dist/commands/index.js"
