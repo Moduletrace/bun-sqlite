@@ -79,8 +79,8 @@ import type { BunSQLiteConfig } from "@moduletrace/bun-sqlite";
 const config: BunSQLiteConfig = {
     db_name: "my-app.db",
     db_schema_file_name: "schema.ts",
-    db_backup_dir: ".backups",
     db_dir: "./db", // optional: where to store the db file
+    db_backup_dir: ".backups", // optional: name of backups directory. Relative to the db dir.
     typedef_file_path: "./db/types/db.ts", // optional: where to write generated types
 };
 
@@ -151,13 +151,13 @@ await BunSQLite.delete({ table: "users", targetId: 1 });
 
 The config file must be named `bun-sqlite.config.ts` and placed at the root of your project.
 
-| Field                 | Type     | Required | Description                                                                       |
-| --------------------- | -------- | -------- | --------------------------------------------------------------------------------- |
-| `db_name`             | `string` | Yes      | Filename for the SQLite database (e.g. `"app.db"`)                                |
-| `db_schema_file_name` | `string` | Yes      | Filename of the schema file relative to `db_dir` (or root if `db_dir` is not set) |
-| `db_backup_dir`       | `string` | Yes      | Directory for database backups, relative to `db_dir`                              |
-| `db_dir`              | `string` | No       | Root directory for the database file and schema. Defaults to project root         |
-| `typedef_file_path`   | `string` | No       | Output path for generated TypeScript types, relative to project root              |
+| Field                 | Type     | Required | Description                                                                                |
+| --------------------- | -------- | -------- | ------------------------------------------------------------------------------------------ |
+| `db_name`             | `string` | Yes      | Filename for the SQLite database (e.g. `"app.db"`)                                         |
+| `db_schema_file_name` | `string` | Yes      | Filename of the schema file relative to `db_dir` (or root if `db_dir` is not set)          |
+| `db_backup_dir`       | `string` | No       | Directory for database backups, relative to `db_dir`                                       |
+| `db_dir`              | `string` | No       | Root directory for the database file and schema. Defaults to project root                  |
+| `typedef_file_path`   | `string` | No       | Output path for generated TypeScript types, relative to project root                       |
 | `max_backups`         | `number` | No       | Maximum number of backup files to keep. Oldest are deleted automatically. Defaults to `10` |
 
 ---
