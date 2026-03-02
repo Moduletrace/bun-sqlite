@@ -24,6 +24,10 @@
         "README.md",
         "package.json"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://git.tben.me/Moduletrace/bun-sqlite.git"
+    },
     "dependencies": {
         "commander": "^14.0.3",
         "lodash": "^4.17.23",
