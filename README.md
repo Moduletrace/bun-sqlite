@@ -15,6 +15,10 @@ A schema-driven SQLite manager for [Bun](https://bun.sh), featuring automatic sc
 - [Configuration](#configuration)
 - [Schema Definition](#schema-definition)
 - [CLI Commands](#cli-commands)
+    - [`schema`](#schema--sync-database-to-schema)
+    - [`typedef`](#typedef--generate-typescript-types-only)
+    - [`backup`](#backup--back-up-the-database)
+    - [`restore`](#restore--restore-the-database-from-a-backup)
 - [CRUD API](#crud-api)
     - [Select](#select)
     - [Insert](#insert)
@@ -154,6 +158,7 @@ The config file must be named `bun-sqlite.config.ts` and placed at the root of y
 | `db_backup_dir`       | `string` | Yes      | Directory for database backups, relative to `db_dir`                              |
 | `db_dir`              | `string` | No       | Root directory for the database file and schema. Defaults to project root         |
 | `typedef_file_path`   | `string` | No       | Output path for generated TypeScript types, relative to project root              |
+| `max_backups`         | `number` | No       | Maximum number of backup files to keep. Oldest are deleted automatically. Defaults to `10` |
 
 ---
 
@@ -271,6 +276,47 @@ bunx bun-sqlite typedef
 ```
 
 Reads the schema and writes TypeScript type definitions to the path configured in `typedef_file_path`.
+
+---
+
+### `backup` — Back up the database
+
+```bash
+bunx bun-sqlite backup
+```
+
+Copies the current database file into `db_backup_dir` with a timestamped filename. After copying, the oldest backups are automatically pruned so the number of stored backups never exceeds `max_backups` (default: 10).
+
+**Example:**
+
+```bash
+bunx bun-sqlite backup
+# Backing up database ...
+# DB Backup Success!
+```
+
+---
+
+### `restore` — Restore the database from a backup
+
+```bash
+bunx bun-sqlite restore
+```
+
+Presents an interactive list of available backups sorted by date (newest first). Select a backup to overwrite the current database file with it.
+
+**Example:**
+
+```bash
+bunx bun-sqlite restore
+# Restoring up database ...
+# ? Select a backup: (Use arrow keys)
+# ❯ Backup #1: Mon Mar 02 2026 14:30:00
+#   Backup #2: Sun Mar 01 2026 09:15:42
+# DB Restore Success!
+```
+
+> If no backups exist, the command exits with an error and a reminder to run `backup` first.
 
 ---
 
@@ -695,7 +741,9 @@ bun-sqlite/
 │   ├── commands/
 │   │   ├── index.ts                    # CLI entry point
 │   │   ├── schema.ts                   # `schema` command
-│   │   └── typedef.ts                  # `typedef` command
+│   │   ├── typedef.ts                  # `typedef` command
+│   │   ├── backup.ts                   # `backup` command
+│   │   └── restore.ts                  # `restore` command
 │   ├── functions/
 │   │   └── init.ts                     # Config + schema loader
 │   ├── lib/sqlite/
@@ -715,7 +763,12 @@ bun-sqlite/
 │       ├── sql-insert-generator.ts     # INSERT query builder
 │       ├── sql-gen-operator-gen.ts     # Equality operator mapper
 │       ├── sql-equality-parser.ts      # Equality string parser
-│       └── append-default-fields-to-db-schema.ts
+│       ├── append-default-fields-to-db-schema.ts
+│       ├── grab-db-dir.ts              # Resolve db/backup directory paths
+│       ├── grab-db-backup-file-name.ts # Generate timestamped backup filename
+│       ├── grab-sorted-backups.ts      # List backups sorted newest-first
+│       ├── grab-backup-data.ts         # Parse metadata from a backup filename
+│       └── trim-backups.ts             # Prune oldest backups over max_backups
 └── test/
     └── test-01/                        # Example project using the library
         ├── bun-sqlite.config.ts

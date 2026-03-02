@@ -4,6 +4,7 @@ import dbSchemaToTypeDef from "../lib/sqlite/schema-to-typedef";
 import path from "path";
 import grabDirNames from "../data/grab-dir-names";
 import appendDefaultFieldsToDbSchema from "../utils/append-default-fields-to-db-schema";
+import chalk from "chalk";
 
 export default function () {
     return new Command("typedef")
@@ -29,6 +30,8 @@ export default function () {
                 console.error(``);
                 process.exit(1);
             }
+
+            console.log(`${chalk.bold(chalk.green(`Typedef gen success!`))}`);
 
             process.exit();
         });

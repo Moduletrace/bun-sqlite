@@ -2,6 +2,8 @@
 import { program } from "commander";
 import schema from "./schema";
 import typedef from "./typedef";
+import backup from "./backup";
+import restore from "./restore";
 /**
  * # Describe Program
  */
@@ -14,6 +16,8 @@ program
  */
 program.addCommand(schema());
 program.addCommand(typedef());
+program.addCommand(backup());
+program.addCommand(restore());
 /**
  * # Handle Unavailable Commands
  */

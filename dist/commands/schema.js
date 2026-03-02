@@ -7,6 +7,7 @@ import dbSchemaToTypeDef from "../lib/sqlite/schema-to-typedef";
 import _ from "lodash";
 import { DefaultFields } from "../types";
 import appendDefaultFieldsToDbSchema from "../utils/append-default-fields-to-db-schema";
+import chalk from "chalk";
 export default function () {
     return new Command("schema")
         .description("Build DB From Schema")
@@ -32,6 +33,7 @@ export default function () {
                 dst_file: out_file,
             });
         }
+        console.log(`${chalk.bold(chalk.green(`DB Schema setup success!`))}`);
         process.exit();
     });
 }

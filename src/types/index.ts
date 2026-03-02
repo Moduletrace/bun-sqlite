@@ -1152,6 +1152,7 @@ export type BunSQLiteConfig = {
      * The Directory for backups
      */
     db_backup_dir: string;
+    max_backups?: number;
     /**
      * The Root Directory for the DB file and schema
      */
