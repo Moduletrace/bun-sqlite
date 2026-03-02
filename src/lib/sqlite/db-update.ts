@@ -1,22 +1,17 @@
-import mysql from "mysql";
-import type { DSQL_TRAVIS_AI_ALL_TYPEDEFS, DsqlTables } from "@/types/db";
-import datasquirel from "@moduletrace/datasquirel";
-import type {
-    APIResponseObject,
-    ServerQueryParam,
-} from "@moduletrace/datasquirel/dist/package-shared/types";
 import DbClient from ".";
 import _ from "lodash";
+import type { APIResponseObject, ServerQueryParam } from "../../types";
+import sqlGenerator from "../../utils/sql-generator";
 
-type Params<T extends { [k: string]: any } = DSQL_TRAVIS_AI_ALL_TYPEDEFS> = {
-    table: (typeof DsqlTables)[number];
+type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
+    table: string;
     data: T;
     query?: ServerQueryParam<T>;
     targetId?: number | string;
 };
 
 export default async function DbUpdate<
-    T extends { [k: string]: any } = DSQL_TRAVIS_AI_ALL_TYPEDEFS,
+    T extends { [k: string]: any } = { [k: string]: any },
 >({ table, data, query, targetId }: Params<T>): Promise<APIResponseObject> {
     try {
         let finalQuery = query || {};
@@ -34,7 +29,7 @@ export default async function DbUpdate<
             );
         }
 
-        const sqlQueryObj = datasquirel.sql.sqlGenerator({
+        const sqlQueryObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });
@@ -46,7 +41,7 @@ export default async function DbUpdate<
         if (whereClause) {
             let sql = `UPDATE ${table} SET`;
 
-            const finalData: DSQL_TRAVIS_AI_ALL_TYPEDEFS = {
+            const finalData: { [k: string]: any } = {
                 ...data,
                 updated_at: Date.now(),
             };
@@ -61,7 +56,7 @@ export default async function DbUpdate<
 
                 sql += ` ${key}=?`;
                 values.push(
-                    String(finalData[key as keyof DSQL_TRAVIS_AI_ALL_TYPEDEFS]),
+                    String(finalData[key as keyof { [k: string]: any }]),
                 );
 
                 if (!isLast) {

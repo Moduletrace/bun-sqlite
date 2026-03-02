@@ -1,26 +1,24 @@
-import AppData from "@/data/app-data";
-import grabDirNames from "@/utils/grab-dir-names";
 import { Database } from "bun:sqlite";
 import path from "node:path";
 import * as sqliteVec from "sqlite-vec";
+import grabDirNames from "../../data/grab-dir-names";
+import init from "../../functions/init";
 
 const { ROOT_DIR } = grabDirNames();
+const { config } = await init();
 
-const DBFilePath = path.join(ROOT_DIR, AppData["DbName"]);
-const DBVecPluginFilePath = path.join(ROOT_DIR, AppData["DbVecPluginName"]);
+let db_dir = ROOT_DIR;
+
+if (config.db_dir) {
+    db_dir = config.db_dir;
+}
+
+const DBFilePath = path.join(db_dir, config.db_name);
 
 const DbClient = new Database(DBFilePath, {
     create: true,
 });
 
-// DbClient.loadExtension(DBVecPluginFilePath);
-
 sqliteVec.load(DbClient);
-
-// Test if it's working
-// const { vec_version } = DbClient.prepare(
-//     "select vec_version() as vec_version",
-// ).get();
-// console.log(`sqlite-vec version: ${vec_version}`);
 
 export default DbClient;

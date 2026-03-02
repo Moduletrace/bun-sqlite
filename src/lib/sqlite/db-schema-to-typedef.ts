@@ -1,12 +1,9 @@
-import type {
-    DSQL_DatabaseSchemaType,
-    DSQL_TableSchemaType,
-} from "@moduletrace/datasquirel/dist/package-shared/types";
 import _ from "lodash";
-import generateTypeDefinition from "./generate-type-definitions";
+import type { BUN_SQLITE_DatabaseSchemaType } from "../../types";
+import generateTypeDefinition from "./db-generate-type-defs";
 
 type Params = {
-    dbSchema?: DSQL_DatabaseSchemaType;
+    dbSchema?: BUN_SQLITE_DatabaseSchemaType;
 };
 
 export default function dbSchemaToType(params?: Params): string[] | undefined {
@@ -14,7 +11,7 @@ export default function dbSchemaToType(params?: Params): string[] | undefined {
 
     if (!datasquirelSchema) return;
 
-    let tableNames = `export const DsqlTables = [\n${datasquirelSchema.tables
+    let tableNames = `export const BunSQLiteTables = [\n${datasquirelSchema.tables
         .map((tbl) => `    "${tbl.tableName}",`)
         .join("\n")}\n] as const`;
 
@@ -46,7 +43,7 @@ export default function dbSchemaToType(params?: Params): string[] | undefined {
             const defObj = generateTypeDefinition({
                 paradigm: "TypeScript",
                 table: final_table,
-                typeDefName: `DSQL_${defDbName}_${final_table.tableName.toUpperCase()}`,
+                typeDefName: `BUN_SQLITE_${defDbName}_${final_table.tableName.toUpperCase()}`,
                 allValuesOptional: true,
                 addExport: true,
             });
@@ -60,7 +57,7 @@ export default function dbSchemaToType(params?: Params): string[] | undefined {
         .filter((schm) => typeof schm == "string");
 
     const allTd = defNames?.[0]
-        ? `export type DSQL_${defDbName}_ALL_TYPEDEFS = ${defNames.join(` & `)}`
+        ? `export type BUN_SQLITE_${defDbName}_ALL_TYPEDEFS = ${defNames.join(` & `)}`
         : ``;
 
     return [tableNames, ...schemas, allTd];

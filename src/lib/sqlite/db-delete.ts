@@ -1,20 +1,16 @@
-import type { DSQL_TRAVIS_AI_ALL_TYPEDEFS, DsqlTables } from "@/types/db";
-import datasquirel from "@moduletrace/datasquirel";
-import type {
-    APIResponseObject,
-    ServerQueryParam,
-} from "@moduletrace/datasquirel/dist/package-shared/types";
 import DbClient from ".";
 import _ from "lodash";
+import type { APIResponseObject, ServerQueryParam } from "../../types";
+import sqlGenerator from "../../utils/sql-generator";
 
-type Params<T extends { [k: string]: any } = DSQL_TRAVIS_AI_ALL_TYPEDEFS> = {
-    table: (typeof DsqlTables)[number];
+type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
+    table: string;
     query?: ServerQueryParam<T>;
     targetId?: number | string;
 };
 
 export default async function DbDelete<
-    T extends { [k: string]: any } = DSQL_TRAVIS_AI_ALL_TYPEDEFS,
+    T extends { [k: string]: any } = { [k: string]: any },
 >({ table, query, targetId }: Params<T>): Promise<APIResponseObject> {
     try {
         let finalQuery = query || {};
@@ -32,7 +28,7 @@ export default async function DbDelete<
             );
         }
 
-        const sqlQueryObj = datasquirel.sql.sqlGenerator({
+        const sqlQueryObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });

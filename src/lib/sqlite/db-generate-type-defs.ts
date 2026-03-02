@@ -1,11 +1,11 @@
 import type {
-    DSQL_FieldSchemaType,
-    DSQL_TableSchemaType,
-} from "@moduletrace/datasquirel/dist/package-shared/types";
+    BUN_SQLITE_FieldSchemaType,
+    BUN_SQLITE_TableSchemaType,
+} from "../../types";
 
 type Param = {
     paradigm: "JavaScript" | "TypeScript" | undefined;
-    table: DSQL_TableSchemaType;
+    table: BUN_SQLITE_TableSchemaType;
     query?: any;
     typeDefName?: string;
     allValuesOptional?: boolean;
@@ -29,12 +29,12 @@ export default function generateTypeDefinition({
         tdName = typeDefName
             ? typeDefName
             : dbName
-              ? `DSQL_${dbName}_${table.tableName}`.toUpperCase()
-              : `DSQL_${query.single}_${query.single_table}`.toUpperCase();
+              ? `BUN_SQLITE_${dbName}_${table.tableName}`.toUpperCase()
+              : `BUN_SQLITE_${query.single}_${query.single_table}`.toUpperCase();
 
         const fields = table.fields;
 
-        function typeMap(schemaType: DSQL_FieldSchemaType) {
+        function typeMap(schemaType: BUN_SQLITE_FieldSchemaType) {
             if (schemaType.options && schemaType.options.length > 0) {
                 return schemaType.options
                     .map((opt) =>

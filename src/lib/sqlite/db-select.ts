@@ -1,24 +1,18 @@
 import mysql from "mysql";
-import type { DSQL_TRAVIS_AI_ALL_TYPEDEFS, DsqlTables } from "@/types/db";
-import datasquirel from "@moduletrace/datasquirel";
-import type {
-    APIResponseObject,
-    ServerQueryParam,
-} from "@moduletrace/datasquirel/dist/package-shared/types";
 import DbClient from ".";
 import _ from "lodash";
+import type { APIResponseObject, ServerQueryParam } from "../../types";
+import sqlGenerator from "../../utils/sql-generator";
 
-type Params<
-    T extends DSQL_TRAVIS_AI_ALL_TYPEDEFS = DSQL_TRAVIS_AI_ALL_TYPEDEFS,
-> = {
+type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
     query?: ServerQueryParam<T>;
-    table: (typeof DsqlTables)[number];
+    table: string;
     count?: boolean;
     targetId?: number | string;
 };
 
 export default async function DbSelect<
-    T extends DSQL_TRAVIS_AI_ALL_TYPEDEFS = DSQL_TRAVIS_AI_ALL_TYPEDEFS,
+    T extends { [k: string]: any } = { [k: string]: any },
 >({ table, query, count, targetId }: Params<T>): Promise<APIResponseObject<T>> {
     try {
         let finalQuery = query || {};
@@ -36,7 +30,7 @@ export default async function DbSelect<
             );
         }
 
-        const sqlObj = datasquirel.sql.sqlGenerator({
+        const sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
             count,
@@ -47,8 +41,8 @@ export default async function DbSelect<
         const res = DbClient.query<T, T[]>(sql);
         const batchRes = res.all();
 
-        return {
-            success: true,
+        let resp: APIResponseObject<T> = {
+            success: Boolean(batchRes[0]),
             payload: batchRes,
             singleRes: batchRes[0],
             debug: {
@@ -56,6 +50,16 @@ export default async function DbSelect<
                 sql,
             },
         };
+
+        if (count) {
+            const count_val = count ? batchRes[0]?.["COUNT(*)"] : undefined;
+            resp["count"] = Number(count_val);
+
+            delete resp.payload;
+            delete resp.singleRes;
+        }
+
+        return resp;
     } catch (error: any) {
         return {
             success: false,

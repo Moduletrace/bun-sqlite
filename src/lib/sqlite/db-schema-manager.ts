@@ -1,26 +1,26 @@
 #!/usr/bin/env bun
 
-import type {
-    DSQL_DatabaseSchemaType,
-    DSQL_FieldSchemaType,
-    DSQL_TableSchemaType,
-} from "@moduletrace/datasquirel/dist/package-shared/types";
 import { Database } from "bun:sqlite";
 import _ from "lodash";
 import DbClient from ".";
+import type {
+    BUN_SQLITE_DatabaseSchemaType,
+    BUN_SQLITE_FieldSchemaType,
+    BUN_SQLITE_TableSchemaType,
+} from "../../types";
 
 // Schema Manager Class
 class SQLiteSchemaManager {
     private db: Database;
     private db_manager_table_name: string;
     private recreate_vector_table: boolean;
-    private db_schema: DSQL_DatabaseSchemaType;
+    private db_schema: BUN_SQLITE_DatabaseSchemaType;
 
     constructor({
         schema,
         recreate_vector_table = false,
     }: {
-        schema: DSQL_DatabaseSchemaType;
+        schema: BUN_SQLITE_DatabaseSchemaType;
         recreate_vector_table?: boolean;
     }) {
         this.db = DbClient;
@@ -113,7 +113,7 @@ class SQLiteSchemaManager {
      * Sync a single table (create or update)
      */
     private async syncTable(
-        table: DSQL_TableSchemaType,
+        table: BUN_SQLITE_TableSchemaType,
         existingTables: string[],
     ): Promise<void> {
         let tableExists = existingTables.includes(table.tableName);
@@ -149,7 +149,9 @@ class SQLiteSchemaManager {
     /**
      * Create a new table
      */
-    private async createTable(table: DSQL_TableSchemaType): Promise<void> {
+    private async createTable(
+        table: BUN_SQLITE_TableSchemaType,
+    ): Promise<void> {
         console.log(`Creating table: ${table.tableName}`);
 
         let new_table = _.cloneDeep(table);
@@ -215,7 +217,9 @@ class SQLiteSchemaManager {
     /**
      * Update an existing table
      */
-    private async updateTable(table: DSQL_TableSchemaType): Promise<void> {
+    private async updateTable(
+        table: BUN_SQLITE_TableSchemaType,
+    ): Promise<void> {
         console.log(`Updating table: ${table.tableName}`);
 
         const existingColumns = this.getTableColumns(table.tableName);
@@ -272,7 +276,7 @@ class SQLiteSchemaManager {
      */
     private async addColumn(
         tableName: string,
-        field: DSQL_FieldSchemaType,
+        field: BUN_SQLITE_FieldSchemaType,
     ): Promise<void> {
         console.log(`Adding column: ${tableName}.${field.fieldName}`);
 
@@ -292,7 +296,9 @@ class SQLiteSchemaManager {
     /**
      * Recreate table (for complex schema changes)
      */
-    private async recreateTable(table: DSQL_TableSchemaType): Promise<void> {
+    private async recreateTable(
+        table: BUN_SQLITE_TableSchemaType,
+    ): Promise<void> {
         if (table.isVector) {
             if (!this.recreate_vector_table) {
                 return;
@@ -365,7 +371,7 @@ class SQLiteSchemaManager {
     /**
      * Build column definition SQL
      */
-    private buildColumnDefinition(field: DSQL_FieldSchemaType): string {
+    private buildColumnDefinition(field: BUN_SQLITE_FieldSchemaType): string {
         if (!field.fieldName) {
             throw new Error("Field name is required");
         }
@@ -420,7 +426,7 @@ class SQLiteSchemaManager {
     /**
      * Map DSQL data types to SQLite types
      */
-    private mapDataType(field: DSQL_FieldSchemaType): string {
+    private mapDataType(field: BUN_SQLITE_FieldSchemaType): string {
         const dataType = field.dataType?.toLowerCase() || "text";
         const vectorSize = field.vectorSize || 1536;
 
@@ -472,7 +478,9 @@ class SQLiteSchemaManager {
     /**
      * Build foreign key constraint
      */
-    private buildForeignKeyConstraint(field: DSQL_FieldSchemaType): string {
+    private buildForeignKeyConstraint(
+        field: BUN_SQLITE_FieldSchemaType,
+    ): string {
         const fk = field.foreignKey!;
         let constraint = `FOREIGN KEY ("${field.fieldName}") REFERENCES "${fk.destinationTableName}"("${fk.destinationTableColumnName}")`;
 
@@ -490,7 +498,9 @@ class SQLiteSchemaManager {
     /**
      * Sync indexes for a table
      */
-    private async syncIndexes(table: DSQL_TableSchemaType): Promise<void> {
+    private async syncIndexes(
+        table: BUN_SQLITE_TableSchemaType,
+    ): Promise<void> {
         if (!table.indexes || table.indexes.length === 0) {
             return;
         }
@@ -547,7 +557,7 @@ class SQLiteSchemaManager {
 
 // Example usage
 async function main() {
-    const schema: DSQL_DatabaseSchemaType = {
+    const schema: BUN_SQLITE_DatabaseSchemaType = {
         dbName: "example_db",
         tables: [
             {

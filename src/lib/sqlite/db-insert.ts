@@ -1,25 +1,23 @@
-import type { DSQL_TRAVIS_AI_ALL_TYPEDEFS, DsqlTables } from "@/types/db";
-import datasquirel from "@moduletrace/datasquirel";
-import type { APIResponseObject } from "@moduletrace/datasquirel/dist/package-shared/types";
 import DbClient from ".";
-import type { DBChanges } from "@/types/general";
+import type { APIResponseObject } from "../../types";
+import sqlInsertGenerator from "../../utils/sql-insert-generator";
 
-type Params<T extends { [k: string]: any } = DSQL_TRAVIS_AI_ALL_TYPEDEFS> = {
-    table: (typeof DsqlTables)[number];
+type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
+    table: string;
     data: T[];
 };
 
 export default async function DbInsert<
-    T extends { [k: string]: any } = DSQL_TRAVIS_AI_ALL_TYPEDEFS,
->({ table, data }: Params<T>): Promise<APIResponseObject<DBChanges>> {
+    T extends { [k: string]: any } = { [k: string]: any },
+>({ table, data }: Params<T>): Promise<APIResponseObject> {
     try {
-        const finalData: DSQL_TRAVIS_AI_ALL_TYPEDEFS[] = data.map((d) => ({
+        const finalData: { [k: string]: any }[] = data.map((d) => ({
             ...d,
             created_at: Date.now(),
             updated_at: Date.now(),
         }));
 
-        const sqlObj = datasquirel.sql.sqlInsertGenerator({
+        const sqlObj = sqlInsertGenerator({
             tableName: table,
             data: finalData as any[],
         });

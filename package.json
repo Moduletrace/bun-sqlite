@@ -1,12 +1,33 @@
 {
-  "name": "bun-sqlite",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+    "name": "@moduletrace/bun-sqlite",
+    "version": "1.0.0",
+    "description": "SQLite manager for Bun",
+    "main": "dist/index.js",
+    "bin": {
+        "bun-sqlite": "dist/commands/index.js"
+    },
+    "scripts": {
+        "dev": "tsc --watch",
+        "compile": "rm -rf dist && tsc"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "@types/lodash": "^4.17.24",
+        "@types/mysql": "^2.15.27",
+        "@types/node": "^25.3.3"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "package.json"
+    ],
+    "dependencies": {
+        "commander": "^14.0.3",
+        "lodash": "^4.17.23",
+        "mysql": "^2.18.1",
+        "sqlite-vec": "^0.1.7-alpha.2"
+    }
 }
