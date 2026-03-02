@@ -1,7 +1,7 @@
 import DbClient from ".";
 import _ from "lodash";
 import sqlGenerator from "../../utils/sql-generator";
-export default async function DbUpdate({ table, data, query, targetId }) {
+export default async function DbUpdate({ table, data, query, targetId, }) {
     try {
         let finalQuery = query || {};
         if (targetId) {

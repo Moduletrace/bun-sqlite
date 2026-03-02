@@ -1,15 +1,15 @@
 import type { APIResponseObject } from "../../types";
-type Params<T extends {
+type Params<Schema extends {
     [k: string]: any;
 } = {
     [k: string]: any;
-}> = {
-    table: string;
-    data: T[];
+}, Table extends string = string> = {
+    table: Table;
+    data: Schema[];
 };
-export default function DbInsert<T extends {
+export default function DbInsert<Schema extends {
     [k: string]: any;
 } = {
     [k: string]: any;
-}>({ table, data }: Params<T>): Promise<APIResponseObject>;
+}, Table extends string = string>({ table, data }: Params<Schema, Table>): Promise<APIResponseObject>;
 export {};

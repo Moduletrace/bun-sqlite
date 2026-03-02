@@ -1,7 +1,7 @@
 import DbClient from ".";
 import _ from "lodash";
 import sqlGenerator from "../../utils/sql-generator";
-export default async function DbDelete({ table, query, targetId }) {
+export default async function DbDelete({ table, query, targetId, }) {
     try {
         let finalQuery = query || {};
         if (targetId) {

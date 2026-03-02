@@ -4,16 +4,25 @@ import _ from "lodash";
 import type { APIResponseObject, ServerQueryParam } from "../../types";
 import sqlGenerator from "../../utils/sql-generator";
 
-type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
-    query?: ServerQueryParam<T>;
-    table: string;
+type Params<
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+> = {
+    query?: ServerQueryParam<Schema>;
+    table: Table;
     count?: boolean;
     targetId?: number | string;
 };
 
 export default async function DbSelect<
-    T extends { [k: string]: any } = { [k: string]: any },
->({ table, query, count, targetId }: Params<T>): Promise<APIResponseObject<T>> {
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+>({
+    table,
+    query,
+    count,
+    targetId,
+}: Params<Schema, Table>): Promise<APIResponseObject<Schema>> {
     try {
         let finalQuery = query || {};
 
@@ -38,10 +47,10 @@ export default async function DbSelect<
 
         const sql = mysql.format(sqlObj.string, sqlObj.values);
 
-        const res = DbClient.query<T, T[]>(sql);
+        const res = DbClient.query<Schema, Schema[]>(sql);
         const batchRes = res.all();
 
-        let resp: APIResponseObject<T> = {
+        let resp: APIResponseObject<Schema> = {
             success: Boolean(batchRes[0]),
             payload: batchRes,
             singleRes: batchRes[0],

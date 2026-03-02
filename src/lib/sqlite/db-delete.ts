@@ -3,15 +3,23 @@ import _ from "lodash";
 import type { APIResponseObject, ServerQueryParam } from "../../types";
 import sqlGenerator from "../../utils/sql-generator";
 
-type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
-    table: string;
-    query?: ServerQueryParam<T>;
+type Params<
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+> = {
+    table: Table;
+    query?: ServerQueryParam<Schema>;
     targetId?: number | string;
 };
 
 export default async function DbDelete<
-    T extends { [k: string]: any } = { [k: string]: any },
->({ table, query, targetId }: Params<T>): Promise<APIResponseObject> {
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+>({
+    table,
+    query,
+    targetId,
+}: Params<Schema, Table>): Promise<APIResponseObject> {
     try {
         let finalQuery = query || {};
 

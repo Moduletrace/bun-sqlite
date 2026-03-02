@@ -2,14 +2,18 @@ import DbClient from ".";
 import type { APIResponseObject } from "../../types";
 import sqlInsertGenerator from "../../utils/sql-insert-generator";
 
-type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
-    table: string;
-    data: T[];
+type Params<
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+> = {
+    table: Table;
+    data: Schema[];
 };
 
 export default async function DbInsert<
-    T extends { [k: string]: any } = { [k: string]: any },
->({ table, data }: Params<T>): Promise<APIResponseObject> {
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+>({ table, data }: Params<Schema, Table>): Promise<APIResponseObject> {
     try {
         const finalData: { [k: string]: any }[] = data.map((d) => ({
             ...d,

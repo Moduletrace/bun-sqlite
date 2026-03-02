@@ -1,17 +1,17 @@
 import type { APIResponseObject, ServerQueryParam } from "../../types";
-type Params<T extends {
+type Params<Schema extends {
     [k: string]: any;
 } = {
     [k: string]: any;
-}> = {
-    table: string;
-    data: T;
-    query?: ServerQueryParam<T>;
+}, Table extends string = string> = {
+    table: Table;
+    data: Schema;
+    query?: ServerQueryParam<Schema>;
     targetId?: number | string;
 };
-export default function DbUpdate<T extends {
+export default function DbUpdate<Schema extends {
     [k: string]: any;
 } = {
     [k: string]: any;
-}>({ table, data, query, targetId }: Params<T>): Promise<APIResponseObject>;
+}, Table extends string = string>({ table, data, query, targetId, }: Params<Schema, Table>): Promise<APIResponseObject>;
 export {};

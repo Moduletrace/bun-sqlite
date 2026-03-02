@@ -2,7 +2,7 @@ import mysql from "mysql";
 import DbClient from ".";
 import _ from "lodash";
 import sqlGenerator from "../../utils/sql-generator";
-export default async function DbSelect({ table, query, count, targetId }) {
+export default async function DbSelect({ table, query, count, targetId, }) {
     try {
         let finalQuery = query || {};
         if (targetId) {

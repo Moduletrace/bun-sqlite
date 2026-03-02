@@ -1,16 +1,16 @@
 import type { APIResponseObject, ServerQueryParam } from "../../types";
-type Params<T extends {
+type Params<Schema extends {
     [k: string]: any;
 } = {
     [k: string]: any;
-}> = {
-    table: string;
-    query?: ServerQueryParam<T>;
+}, Table extends string = string> = {
+    table: Table;
+    query?: ServerQueryParam<Schema>;
     targetId?: number | string;
 };
-export default function DbDelete<T extends {
+export default function DbDelete<Schema extends {
     [k: string]: any;
 } = {
     [k: string]: any;
-}>({ table, query, targetId }: Params<T>): Promise<APIResponseObject>;
+}, Table extends string = string>({ table, query, targetId, }: Params<Schema, Table>): Promise<APIResponseObject>;
 export {};

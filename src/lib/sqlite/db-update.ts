@@ -3,16 +3,25 @@ import _ from "lodash";
 import type { APIResponseObject, ServerQueryParam } from "../../types";
 import sqlGenerator from "../../utils/sql-generator";
 
-type Params<T extends { [k: string]: any } = { [k: string]: any }> = {
-    table: string;
-    data: T;
-    query?: ServerQueryParam<T>;
+type Params<
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+> = {
+    table: Table;
+    data: Schema;
+    query?: ServerQueryParam<Schema>;
     targetId?: number | string;
 };
 
 export default async function DbUpdate<
-    T extends { [k: string]: any } = { [k: string]: any },
->({ table, data, query, targetId }: Params<T>): Promise<APIResponseObject> {
+    Schema extends { [k: string]: any } = { [k: string]: any },
+    Table extends string = string,
+>({
+    table,
+    data,
+    query,
+    targetId,
+}: Params<Schema, Table>): Promise<APIResponseObject> {
     try {
         let finalQuery = query || {};
 
