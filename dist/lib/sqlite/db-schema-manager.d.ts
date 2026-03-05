@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 import type { BUN_SQLITE_DatabaseSchemaType } from "../../types";
 declare class SQLiteSchemaManager {
     private db;
