@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import { Database } from "bun:sqlite";
 import _ from "lodash";
 import DbClient from ".";

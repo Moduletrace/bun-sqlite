@@ -5,7 +5,6 @@ import grabDirNames from "../data/grab-dir-names";
 import path from "path";
 import dbSchemaToTypeDef from "../lib/sqlite/schema-to-typedef";
 import _ from "lodash";
-import { DefaultFields } from "../types";
 import appendDefaultFieldsToDbSchema from "../utils/append-default-fields-to-db-schema";
 import chalk from "chalk";
 
