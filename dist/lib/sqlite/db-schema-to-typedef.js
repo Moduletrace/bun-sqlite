@@ -1,16 +1,14 @@
 import _ from "lodash";
 import generateTypeDefinition from "./db-generate-type-defs";
-export default function dbSchemaToType(params) {
-    let datasquirelSchema = params?.dbSchema;
+export default function dbSchemaToType({ config, dbSchema, }) {
+    let datasquirelSchema = dbSchema;
     if (!datasquirelSchema)
         return;
     let tableNames = `export const BunSQLiteTables = [\n${datasquirelSchema.tables
         .map((tbl) => `    "${tbl.tableName}",`)
         .join("\n")}\n] as const`;
     const dbTablesSchemas = datasquirelSchema.tables;
-    const defDbName = datasquirelSchema.dbName
-        ?.toUpperCase()
-        .replace(/ |\-/g, "_");
+    const defDbName = config.db_name?.toUpperCase().replace(/ |\-/g, "_");
     const defNames = [];
     const schemas = dbTablesSchemas
         .map((table) => {

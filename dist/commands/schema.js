@@ -30,6 +30,7 @@ export default function () {
             dbSchemaToTypeDef({
                 dbSchema: finaldbSchema,
                 dst_file: out_file,
+                config,
             });
         }
         console.log(`${chalk.bold(chalk.green(`DB Schema setup success!`))}`);

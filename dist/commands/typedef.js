@@ -18,6 +18,7 @@ export default function () {
             dbSchemaToTypeDef({
                 dbSchema: finaldbSchema,
                 dst_file: out_file,
+                config,
             });
         }
         else {

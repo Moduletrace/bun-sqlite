@@ -1,13 +1,20 @@
 import _ from "lodash";
-import type { BUN_SQLITE_DatabaseSchemaType } from "../../types";
+import type {
+    BUN_SQLITE_DatabaseSchemaType,
+    BunSQLiteConfig,
+} from "../../types";
 import generateTypeDefinition from "./db-generate-type-defs";
 
 type Params = {
-    dbSchema?: BUN_SQLITE_DatabaseSchemaType;
+    dbSchema: BUN_SQLITE_DatabaseSchemaType;
+    config: BunSQLiteConfig;
 };
 
-export default function dbSchemaToType(params?: Params): string[] | undefined {
-    let datasquirelSchema = params?.dbSchema;
+export default function dbSchemaToType({
+    config,
+    dbSchema,
+}: Params): string[] | undefined {
+    let datasquirelSchema = dbSchema;
 
     if (!datasquirelSchema) return;
 
@@ -17,9 +24,7 @@ export default function dbSchemaToType(params?: Params): string[] | undefined {
 
     const dbTablesSchemas = datasquirelSchema.tables;
 
-    const defDbName = datasquirelSchema.dbName
-        ?.toUpperCase()
-        .replace(/ |\-/g, "_");
+    const defDbName = config.db_name?.toUpperCase().replace(/ |\-/g, "_");
 
     const defNames: string[] = [];
 
