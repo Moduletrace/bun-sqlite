@@ -47,6 +47,16 @@ A schema-driven SQLite manager for [Bun](https://bun.sh), featuring automatic sc
 
 ## Prerequisites
 
+This works for just `bun`, so `bun` should be installed.
+
+---
+
+## Installation
+
+There are two ways to install BunSQLite:
+
+### Via the official npm registry
+
 `@moduletrace/bun-sqlite` is published to a private Gitea npm registry. You must configure your package manager to resolve the `@moduletrace` scope from that registry before installing.
 
 Add the following to your project's `.npmrc` file (create it at the root of your project if it doesn't exist):
@@ -55,14 +65,18 @@ Add the following to your project's `.npmrc` file (create it at the root of your
 @moduletrace:registry=https://git.tben.me/api/packages/moduletrace/npm/
 ```
 
-This works for both `bun` and `npm`.
-
----
-
-## Installation
+After this you can run
 
 ```bash
 bun add @moduletrace/bun-sqlite
+```
+
+### Via Github
+
+To install directly from github simply run
+
+```bash
+bun add github:moduletrace/bun-sqlite
 ```
 
 ---
