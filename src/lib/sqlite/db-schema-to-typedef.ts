@@ -24,7 +24,9 @@ export default function dbSchemaToType({
 
     const dbTablesSchemas = datasquirelSchema.tables;
 
-    const defDbName = config.db_name?.toUpperCase().replace(/ |\-/g, "_");
+    const defDbName = config.db_name
+        ?.toUpperCase()
+        .replace(/^[a-zA-Z0-9]/g, "_");
 
     const defNames: string[] = [];
 
