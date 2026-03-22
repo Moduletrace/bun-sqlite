@@ -19,15 +19,18 @@ export default function () {
                 const paradigm = await select({
                     message: "Choose an action:",
                     choices: [
-                        { name: "List Tables", value: "list_tables" },
-                        { name: "Run SQL", value: "run_sql" },
+                        { name: "Tables", value: "list_tables" },
+                        { name: "SQL", value: "run_sql" },
                         { name: chalk.dim("✕ Exit"), value: "exit" },
                     ],
                 });
                 if (paradigm === "exit")
                     break;
-                if (paradigm === "list_tables")
-                    await listTables({ db });
+                if (paradigm === "list_tables") {
+                    const result = await listTables({ db });
+                    if (result === "__exit__")
+                        break;
+                }
                 if (paradigm === "run_sql")
                     await runSQL({ db });
             }

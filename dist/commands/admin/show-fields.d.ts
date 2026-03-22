@@ -3,5 +3,5 @@ type Params = {
     db: Database;
     tableName: string;
 };
-export default function showEntries({ db, tableName }: Params): Promise<"__exit__" | undefined>;
+export default function showFields({ db, tableName }: Params): Promise<"__exit__" | void>;
 export {};

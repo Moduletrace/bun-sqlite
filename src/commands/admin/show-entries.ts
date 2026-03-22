@@ -34,9 +34,7 @@ export default async function showEntries({ db, tableName }: Params) {
                           `SELECT COUNT(*) as count FROM "${tableName}" WHERE "${searchField}" LIKE ?`,
                       )
                       .get(`%${searchTerm}%`)
-                : db
-                      .query(`SELECT COUNT(*) as count FROM "${tableName}"`)
-                      .get()
+                : db.query(`SELECT COUNT(*) as count FROM "${tableName}"`).get()
         ) as { count: number };
 
         const total = countRow.count;
@@ -47,9 +45,14 @@ export default async function showEntries({ db, tableName }: Params) {
         console.log(
             `\n${chalk.bold(tableName)} — Page ${page + 1}${searchInfo} (${rows.length} of ${total}):\n`,
         );
-        if (rows.length) console.table(rows);
-        else console.log(chalk.yellow("No rows found."));
-        console.log();
+
+        if (rows.length) {
+            console.log(rows);
+            // if (rows.length) console.table(rows);
+        } else {
+            console.log(chalk.yellow("No rows found."));
+            console.log();
+        }
 
         const choices: { name: string; value: string }[] = [];
         if (page > 0) choices.push({ name: "← Previous Page", value: "prev" });
@@ -59,10 +62,12 @@ export default async function showEntries({ db, tableName }: Params) {
         if (searchTerm)
             choices.push({ name: "Clear Search", value: "clear_search" });
         choices.push({ name: chalk.dim("← Go Back"), value: "__back__" });
+        choices.push({ name: chalk.dim("✕ Exit"), value: "__exit__" });
 
         const action = await select({ message: "Navigate:", choices });
 
         if (action === "__back__") break;
+        if (action === "__exit__") return "__exit__";
         if (action === "next") page++;
         if (action === "prev") page--;
         if (action === "clear_search") {

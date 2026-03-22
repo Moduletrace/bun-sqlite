@@ -3,7 +3,8 @@ import chalk from "chalk";
 import { select } from "@inquirer/prompts";
 import { AppData } from "../../data/app-data";
 import showEntries from "./show-entries";
-export default async function listTables({ db }) {
+import showFields from "./show-fields";
+export default async function listTables({ db, }) {
     const tables = db
         .query(`SELECT table_name FROM ${AppData["DbSchemaManagerTableName"]}`)
         .all();
@@ -16,26 +17,43 @@ export default async function listTables({ db }) {
         const tableName = await select({
             message: "Select a table:",
             choices: [
-                ...tables.map((t) => ({ name: t.table_name, value: t.table_name })),
+                ...tables.map((t) => ({
+                    name: t.table_name,
+                    value: t.table_name,
+                })),
                 { name: chalk.dim("← Go Back"), value: "__back__" },
+                { name: chalk.dim("✕ Exit"), value: "__exit__" },
             ],
         });
         if (tableName === "__back__")
             break;
+        if (tableName === "__exit__")
+            return "__exit__";
         // Level 2: action loop — stays here until "Go Back"
         while (true) {
             const action = await select({
                 message: `"${tableName}" — choose an action:`,
                 choices: [
-                    { name: "Show Entries", value: "entries" },
-                    { name: "Show Schema", value: "schema" },
+                    { name: "Entries", value: "entries" },
+                    { name: "Fields", value: "fields" },
+                    { name: "Schema", value: "schema" },
                     { name: chalk.dim("← Go Back"), value: "__back__" },
+                    { name: chalk.dim("✕ Exit"), value: "__exit__" },
                 ],
             });
             if (action === "__back__")
                 break;
+            if (action === "__exit__")
+                return "__exit__";
             if (action === "entries") {
-                await showEntries({ db, tableName });
+                const result = await showEntries({ db, tableName });
+                if (result === "__exit__")
+                    return "__exit__";
+            }
+            if (action === "fields") {
+                const result = await showFields({ db, tableName });
+                if (result === "__exit__")
+                    return "__exit__";
             }
             if (action === "schema") {
                 const columns = db
