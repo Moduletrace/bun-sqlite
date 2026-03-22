@@ -10,7 +10,7 @@ export default function dbSchemaToType({ config, dbSchema, }) {
     const dbTablesSchemas = datasquirelSchema.tables;
     const defDbName = config.db_name
         ?.toUpperCase()
-        .replace(/^[a-zA-Z0-9]/g, "_");
+        .replace(/[^a-zA-Z0-9]/g, "_");
     const defNames = [];
     const schemas = dbTablesSchemas
         .map((table) => {
