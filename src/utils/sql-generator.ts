@@ -60,13 +60,15 @@ export default function sqlGenerator<
 
         let str = `${finalFieldName}=?`;
 
-        function grabValue(val?: string | ServerQueryValuesObject | null) {
+        function grabValue(
+            val?: string | number | ServerQueryValuesObject | null,
+        ) {
             const valueParsed = val;
 
             if (!valueParsed) return;
 
             const valueString =
-                typeof valueParsed == "string"
+                typeof valueParsed == "string" || typeof valueParsed == "number"
                     ? valueParsed
                     : valueParsed
                       ? valueParsed.fieldName && valueParsed.tableName

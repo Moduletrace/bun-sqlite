@@ -530,11 +530,14 @@ export type TableSelectFieldsObject<T extends {
 };
 export type ServerQueryValuesObject = {
     value?: string | number;
+    /**
+     * Defaults to EQUAL
+     */
     equality?: (typeof ServerQueryEqualities)[number];
     tableName?: string;
     fieldName?: string;
 };
-export type ServerQueryObjectValue = string | (string | ServerQueryValuesObject | undefined | null) | (string | ServerQueryValuesObject | undefined | null)[];
+export type ServerQueryObjectValue = string | number | ServerQueryValuesObject | undefined | null | (string | number | ServerQueryValuesObject | undefined | null)[];
 export type ServerQueryObject<T extends object = {
     [key: string]: any;
 }, K extends string = string> = {

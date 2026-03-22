@@ -601,6 +601,9 @@ export type TableSelectFieldsObject<
 
 export type ServerQueryValuesObject = {
     value?: string | number;
+    /**
+     * Defaults to EQUAL
+     */
     equality?: (typeof ServerQueryEqualities)[number];
     tableName?: string;
     fieldName?: string;
@@ -608,8 +611,11 @@ export type ServerQueryValuesObject = {
 
 export type ServerQueryObjectValue =
     | string
-    | (string | ServerQueryValuesObject | undefined | null)
-    | (string | ServerQueryValuesObject | undefined | null)[];
+    | number
+    | ServerQueryValuesObject
+    | undefined
+    | null
+    | (string | number | ServerQueryValuesObject | undefined | null)[];
 
 export type ServerQueryObject<
     T extends object = { [key: string]: any },

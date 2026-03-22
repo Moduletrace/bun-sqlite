@@ -27,7 +27,7 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
             const valueParsed = val;
             if (!valueParsed)
                 return;
-            const valueString = typeof valueParsed == "string"
+            const valueString = typeof valueParsed == "string" || typeof valueParsed == "number"
                 ? valueParsed
                 : valueParsed
                     ? valueParsed.fieldName && valueParsed.tableName
