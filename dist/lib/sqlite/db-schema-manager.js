@@ -2,6 +2,7 @@
 import { Database } from "bun:sqlite";
 import _ from "lodash";
 import DbClient from ".";
+import { AppData } from "../../data/app-data";
 // Schema Manager Class
 class SQLiteSchemaManager {
     db;
@@ -10,7 +11,7 @@ class SQLiteSchemaManager {
     db_schema;
     constructor({ schema, recreate_vector_table = false, }) {
         this.db = DbClient;
-        this.db_manager_table_name = "__db_schema_manager__";
+        this.db_manager_table_name = AppData["DbSchemaManagerTableName"];
         this.db.run("PRAGMA foreign_keys = ON;");
         this.recreate_vector_table = recreate_vector_table;
         this.createDbManagerTable();

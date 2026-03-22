@@ -1,0 +1,6 @@
+import { Database } from "bun:sqlite";
+type Params = {
+    db: Database;
+};
+export default function listTables({ db }: Params): Promise<void>;
+export {};

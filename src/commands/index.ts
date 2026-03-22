@@ -5,6 +5,7 @@ import schema from "./schema";
 import typedef from "./typedef";
 import backup from "./backup";
 import restore from "./restore";
+import admin from "./admin";
 
 /**
  * # Declare Global Variables
@@ -26,6 +27,7 @@ program.addCommand(schema());
 program.addCommand(typedef());
 program.addCommand(backup());
 program.addCommand(restore());
+program.addCommand(admin());
 
 /**
  * # Handle Unavailable Commands

@@ -8,6 +8,7 @@ import type {
     BUN_SQLITE_FieldSchemaType,
     BUN_SQLITE_TableSchemaType,
 } from "../../types";
+import { AppData } from "../../data/app-data";
 
 // Schema Manager Class
 class SQLiteSchemaManager {
@@ -24,7 +25,7 @@ class SQLiteSchemaManager {
         recreate_vector_table?: boolean;
     }) {
         this.db = DbClient;
-        this.db_manager_table_name = "__db_schema_manager__";
+        this.db_manager_table_name = AppData["DbSchemaManagerTableName"];
         this.db.run("PRAGMA foreign_keys = ON;");
         this.recreate_vector_table = recreate_vector_table;
         this.createDbManagerTable();
