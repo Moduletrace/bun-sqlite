@@ -138,9 +138,11 @@ class SQLiteSchemaManager {
             // Create new table
             await this.createTable(table);
             this.insertDbManagerTable(table.tableName);
-        } else {
+        } else if (!table.isVector) {
             // Update existing table
             await this.updateTable(table);
+        } else {
+            return;
         }
 
         // Sync indexes
