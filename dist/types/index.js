@@ -28,6 +28,7 @@ export const TextFieldTypesArray = [
 export const BUN_SQLITE_DATATYPES = [
     { value: "TEXT" },
     { value: "INTEGER" },
+    { value: "BLOB" },
 ];
 export const ServerQueryOperators = ["AND", "OR"];
 export const ServerQueryEqualities = [

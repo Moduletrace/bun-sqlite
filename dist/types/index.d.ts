@@ -100,6 +100,8 @@ export declare const BUN_SQLITE_DATATYPES: readonly [{
     readonly value: "TEXT";
 }, {
     readonly value: "INTEGER";
+}, {
+    readonly value: "BLOB";
 }];
 export type BUN_SQLITE_FieldSchemaType = {
     id?: number | string;
