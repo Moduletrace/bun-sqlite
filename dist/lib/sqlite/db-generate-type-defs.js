@@ -17,7 +17,7 @@ export default function generateTypeDefinition({ paradigm, table, query, typeDef
                     : `"${opt}"`)
                     .join(" | ");
             }
-            if (schemaType.dataType?.match(/int|double|decimal/i)) {
+            if (schemaType.dataType?.match(/int|double|decimal|real/i)) {
                 return "number";
             }
             if (schemaType.dataType?.match(/text|varchar|timestamp/i)) {

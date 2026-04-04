@@ -46,7 +46,7 @@ export default function generateTypeDefinition({
                     .join(" | ");
             }
 
-            if (schemaType.dataType?.match(/int|double|decimal/i)) {
+            if (schemaType.dataType?.match(/int|double|decimal|real/i)) {
                 return "number";
             }
 
