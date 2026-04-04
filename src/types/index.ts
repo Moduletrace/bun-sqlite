@@ -103,6 +103,7 @@ export const BUN_SQLITE_DATATYPES = [
     { value: "TEXT" },
     { value: "INTEGER" },
     { value: "BLOB" },
+    { value: "REAL" },
 ] as const;
 
 export type BUN_SQLITE_FieldSchemaType = {
