@@ -155,7 +155,9 @@ class SQLiteSchemaManager {
     private async createTable(
         table: BUN_SQLITE_TableSchemaType,
     ): Promise<void> {
-        console.log(`Creating table: ${table.tableName}`);
+        if (!table.tableName.match(/_temp_\d+$/)) {
+            console.log(`Creating table: ${table.tableName}`);
+        }
 
         let new_table = _.cloneDeep(table);
 
@@ -225,42 +227,49 @@ class SQLiteSchemaManager {
     ): Promise<void> {
         console.log(`Updating table: ${table.tableName}`);
 
-        const existingColumns = this.getTableColumns(table.tableName);
-        const schemaColumns = table.fields.map((f) => f.fieldName || "");
+        // const existingColumns = this.getTableColumns(table.tableName);
+        // const schemaColumns = table.fields.map((f) => f.fieldName || "");
 
-        // SQLite has limited ALTER TABLE support
-        // We need to use the recreation strategy for complex changes
+        // // SQLite has limited ALTER TABLE support
+        // // We need to use the recreation strategy for complex changes
 
-        const columnsToAdd = table.fields.filter(
-            (f) =>
-                f.fieldName &&
-                !existingColumns.find(
-                    (c) =>
-                        c.name == f.fieldName && c.type == this.mapDataType(f),
-                ),
-        );
-        const columnsToRemove = existingColumns.filter(
-            (c) => !schemaColumns.includes(c.name),
-        );
-        const columnsToUpdate = table.fields.filter(
-            (f) =>
-                f.fieldName &&
-                f.updatedField &&
-                existingColumns.find(
-                    (c) =>
-                        c.name == f.fieldName && c.type == this.mapDataType(f),
-                ),
-        );
+        // const columnsToAdd = table.fields.filter(
+        //     (f) =>
+        //         f.fieldName &&
+        //         !existingColumns.find(
+        //             (c) =>
+        //                 c.name == f.fieldName && c.type == this.mapDataType(f),
+        //         ),
+        // );
 
-        // Simple case: only adding columns
-        if (columnsToRemove.length === 0 && columnsToUpdate.length === 0) {
-            for (const field of columnsToAdd) {
-                await this.addColumn(table.tableName, field);
-            }
-        } else {
-            // Complex case: need to recreate table
-            await this.recreateTable(table);
-        }
+        // // const columnsToRemove = existingColumns.filter(
+        // //     (c) => !schemaColumns.includes(c.name),
+        // // );
+
+        // // const columnsToUpdate = table.fields.filter(
+        // //     (f) =>
+        // //         f.fieldName &&
+        // //         f.updatedField &&
+        // //         existingColumns.find(
+        // //             (c) =>
+        // //                 c.name == f.fieldName && c.type == this.mapDataType(f),
+        // //         ),
+        // // );
+
+        // for (const field of columnsToAdd) {
+        //     await this.addColumn(table.tableName, field);
+        // }
+
+        // // // Simple case: only adding columns
+        // // if (columnsToRemove.length === 0 && columnsToUpdate.length === 0) {
+        // //     for (const field of columnsToAdd) {
+        // //         await this.addColumn(table.tableName, field);
+        // //     }
+        // // } else {
+        // //     // Complex case: need to recreate table
+        // // }
+
+        await this.recreateTable(table);
     }
 
     /**
@@ -556,82 +565,6 @@ class SQLiteSchemaManager {
     close(): void {
         this.db.close();
     }
-}
-
-// Example usage
-async function main() {
-    const schema: BUN_SQLITE_DatabaseSchemaType = {
-        dbName: "example_db",
-        tables: [
-            {
-                tableName: "users",
-                tableDescription: "User accounts",
-                fields: [
-                    {
-                        fieldName: "id",
-                        dataType: "INTEGER",
-                        primaryKey: true,
-                        autoIncrement: true,
-                    },
-                    {
-                        fieldName: "username",
-                        dataType: "TEXT",
-                        notNullValue: true,
-                        unique: true,
-                    },
-                    {
-                        fieldName: "email",
-                        dataType: "TEXT",
-                        notNullValue: true,
-                    },
-                    {
-                        fieldName: "created_at",
-                        dataType: "TEXT",
-                        defaultValueLiteral: "CURRENT_TIMESTAMP",
-                    },
-                ],
-                indexes: [
-                    {
-                        indexName: "idx_users_email",
-                        indexType: "regular",
-                        indexTableFields: [
-                            { value: "email", dataType: "TEXT" },
-                        ],
-                    },
-                ],
-            },
-            {
-                tableName: "posts",
-                fields: [
-                    {
-                        fieldName: "id",
-                        dataType: "INTEGER",
-                        primaryKey: true,
-                        autoIncrement: true,
-                    },
-                    {
-                        fieldName: "user_id",
-                        dataType: "INTEGER",
-                        notNullValue: true,
-                        foreignKey: {
-                            destinationTableName: "users",
-                            destinationTableColumnName: "id",
-                            cascadeDelete: true,
-                        },
-                    },
-                    {
-                        fieldName: "title",
-                        dataType: "TEXT",
-                        notNullValue: true,
-                    },
-                    {
-                        fieldName: "content",
-                        dataType: "TEXT",
-                    },
-                ],
-            },
-        ],
-    };
 }
 
 export { SQLiteSchemaManager };

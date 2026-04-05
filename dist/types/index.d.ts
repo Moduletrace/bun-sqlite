@@ -110,7 +110,6 @@ export type BUN_SQLITE_FieldSchemaType = {
     fieldName?: string;
     fieldDescription?: string;
     originName?: string;
-    updatedField?: boolean;
     dataType: (typeof BUN_SQLITE_DATATYPES)[number]["value"];
     nullValue?: boolean;
     notNullValue?: boolean;
