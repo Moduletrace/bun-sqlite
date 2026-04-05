@@ -1425,7 +1425,8 @@ export type SQLInsertGenValueType =
     | string
     | number
     | Float32Array<ArrayBuffer>
-    | Buffer<ArrayBuffer>;
+    | Buffer<ArrayBuffer>
+    | null;
 
 /**
  * Callback variant used when a generated insert value needs a custom

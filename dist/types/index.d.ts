@@ -1268,7 +1268,7 @@ export interface SQLInsertGenReturn {
 /**
  * Values accepted by the SQL insert generator, including vector buffers.
  */
-export type SQLInsertGenValueType = string | number | Float32Array<ArrayBuffer> | Buffer<ArrayBuffer>;
+export type SQLInsertGenValueType = string | number | Float32Array<ArrayBuffer> | Buffer<ArrayBuffer> | null;
 /**
  * Callback variant used when a generated insert value needs a custom
  * placeholder.
