@@ -46,6 +46,10 @@ export default function generateTypeDefinition({
                     .join(" | ");
             }
 
+            if (schemaType.dataType?.match(/blob/i)) {
+                return "Float32Array<ArrayBuffer> | Buffer<ArrayBuffer>";
+            }
+
             if (schemaType.dataType?.match(/int|double|decimal|real/i)) {
                 return "number";
             }
