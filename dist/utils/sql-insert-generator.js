@@ -23,9 +23,11 @@ export default function sqlInsertGenerator({ tableName, data, dbFullName, }) {
                     const finalValue = typeof value == "string" ||
                         typeof value == "number"
                         ? value
-                        : value
-                            ? String(value().value)
-                            : null;
+                        : typeof value == "function"
+                            ? value().value
+                            : value
+                                ? value
+                                : null;
                     if (!finalValue) {
                         queryValues.push("");
                         return "?";

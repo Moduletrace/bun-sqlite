@@ -1,4 +1,8 @@
-import type { SQLInsertGenParams, SQLInsertGenReturn } from "../types";
+import type {
+    SQLInsertGenParams,
+    SQLInsertGenReturn,
+    SQLInsertGenValueType,
+} from "../types";
 
 /**
  * # SQL Insert Generator
@@ -24,7 +28,7 @@ export default function sqlInsertGenerator({
             });
 
             let queryBatches: string[] = [];
-            let queryValues: (string | number)[] = [];
+            let queryValues: SQLInsertGenValueType[] = [];
 
             data.forEach((item) => {
                 queryBatches.push(
@@ -36,9 +40,11 @@ export default function sqlInsertGenerator({
                                 typeof value == "string" ||
                                 typeof value == "number"
                                     ? value
-                                    : value
-                                      ? String(value().value)
-                                      : null;
+                                    : typeof value == "function"
+                                      ? value().value
+                                      : value
+                                        ? value
+                                        : null;
 
                             if (!finalValue) {
                                 queryValues.push("");

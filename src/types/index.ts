@@ -1131,16 +1131,22 @@ export type BUNSQLITEErrorObject = {
 
 export interface SQLInsertGenReturn {
     query: string;
-    values: (string | number)[];
+    values: SQLInsertGenValueType[];
 }
+
+export type SQLInsertGenValueType =
+    | string
+    | number
+    | Float32Array<ArrayBuffer>
+    | Buffer<ArrayBuffer>;
 
 export type SQLInsertGenDataFn = () => {
     placeholder: string;
-    value: string | number | Float32Array<ArrayBuffer>;
+    value: SQLInsertGenValueType;
 };
 
 export type SQLInsertGenDataType = {
-    [k: string]: string | number | SQLInsertGenDataFn | undefined | null;
+    [k: string]: SQLInsertGenValueType | SQLInsertGenDataFn | undefined | null;
 };
 
 export type SQLInsertGenParams = {
