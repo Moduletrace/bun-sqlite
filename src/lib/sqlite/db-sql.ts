@@ -1,10 +1,10 @@
 import DbClient from ".";
 import _ from "lodash";
-import type { APIResponseObject } from "../../types";
+import type { APIResponseObject, SQLInsertGenValueType } from "../../types";
 
 type Params = {
     sql: string;
-    values?: (string | number)[];
+    values?: SQLInsertGenValueType[];
 };
 
 export default async function DbSQL<

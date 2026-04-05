@@ -1,7 +1,7 @@
-import type { APIResponseObject } from "../../types";
+import type { APIResponseObject, SQLInsertGenValueType } from "../../types";
 type Params = {
     sql: string;
-    values?: (string | number)[];
+    values?: SQLInsertGenValueType[];
 };
 export default function DbSQL<T extends {
     [k: string]: any;
