@@ -7,6 +7,7 @@ import dbSchemaToTypeDef from "../lib/sqlite/schema-to-typedef";
 import _ from "lodash";
 import appendDefaultFieldsToDbSchema from "../utils/append-default-fields-to-db-schema";
 import chalk from "chalk";
+import { writeLiveSchema } from "../functions/live-schema";
 
 export default function () {
     return new Command("schema")
@@ -47,6 +48,8 @@ export default function () {
                     config,
                 });
             }
+
+            writeLiveSchema({ schema: finaldbSchema });
 
             console.log(
                 `${chalk.bold(chalk.green(`DB Schema setup success!`))}`,

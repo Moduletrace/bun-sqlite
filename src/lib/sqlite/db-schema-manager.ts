@@ -9,6 +9,7 @@ import type {
     BUN_SQLITE_TableSchemaType,
 } from "../../types";
 import { AppData } from "../../data/app-data";
+import { readLiveSchema } from "../../functions/live-schema";
 
 // Schema Manager Class
 class SQLiteSchemaManager {
@@ -95,11 +96,31 @@ class SQLiteSchemaManager {
         existingTables: string[],
         schemaTables: string[],
     ): Promise<void> {
+        console.log(`Cleaning up tables ...`);
+
         const tablesToDrop = existingTables.filter(
             (t) =>
                 !schemaTables.includes(t) &&
                 !schemaTables.find((scT) => t.startsWith(scT + "_")),
         );
+
+        const currentSchema = readLiveSchema();
+
+        if (currentSchema?.tables?.[0]) {
+            for (let i = 0; i < currentSchema.tables.length; i++) {
+                const table = currentSchema.tables[i];
+
+                if (!table?.tableName) continue;
+
+                const does_table_exist = schemaTables.find(
+                    (t) => t == table.tableName,
+                );
+
+                if (!does_table_exist) {
+                    tablesToDrop.push(table.tableName);
+                }
+            }
+        }
 
         for (const tableName of tablesToDrop) {
             console.log(`Dropping table: ${tableName}`);

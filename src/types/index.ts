@@ -1,7 +1,15 @@
 import type { RequestOptions } from "https";
 
+/**
+ * Fully-qualified database name used when a database needs to be referenced
+ * across local and remote operations.
+ */
 export type BUN_SQLITE_DatabaseFullName = string;
 
+/**
+ * User fields that should be omitted from general-purpose payloads and public
+ * responses.
+ */
 export const UsersOmitedFields = [
     "password",
     "social_id",
@@ -14,6 +22,10 @@ export const UsersOmitedFields = [
     "date_updated_timestamp",
 ] as const;
 
+/**
+ * Describes an entire database schema, including its tables and clone/child
+ * database metadata.
+ */
 export interface BUN_SQLITE_DatabaseSchemaType {
     id?: string | number;
     dbName?: string;
@@ -29,15 +41,26 @@ export interface BUN_SQLITE_DatabaseSchemaType {
     collation?: (typeof MariaDBCollations)[number];
 }
 
+/**
+ * Minimal reference to a child database linked to a parent database schema.
+ */
 export interface BUN_SQLITE_ChildrenDatabaseObject {
     dbId?: string | number;
 }
 
+/**
+ * Supported MariaDB collations that can be applied at the database or table
+ * level.
+ */
 export const MariaDBCollations = [
     "utf8mb4_bin",
     "utf8mb4_unicode_520_ci",
 ] as const;
 
+/**
+ * Describes a single table within a database schema, including its fields,
+ * indexes, unique constraints, and parent/child table relationships.
+ */
 export interface BUN_SQLITE_TableSchemaType {
     id?: string | number;
     tableName: string;
@@ -77,15 +100,24 @@ export interface BUN_SQLITE_TableSchemaType {
      */
     childTableDbId?: string | number;
     collation?: (typeof MariaDBCollations)[number];
+    /**
+     * If this is a vector table
+     */
     isVector?: boolean;
     vectorType?: string;
 }
 
+/**
+ * Reference object used to link a table to one of its child tables.
+ */
 export interface BUN_SQLITE_ChildrenTablesType {
     tableId?: string | number;
     dbId?: string | number;
 }
 
+/**
+ * Supported editor/content modes for text fields.
+ */
 export const TextFieldTypesArray = [
     { title: "Plain Text", value: "plain" },
     { title: "Rich Text", value: "richText" },
@@ -99,6 +131,9 @@ export const TextFieldTypesArray = [
     { title: "Code", value: "code" },
 ] as const;
 
+/**
+ * Core SQLite column types supported by the schema builder.
+ */
 export const BUN_SQLITE_DATATYPES = [
     { value: "TEXT" },
     { value: "INTEGER" },
@@ -106,6 +141,10 @@ export const BUN_SQLITE_DATATYPES = [
     { value: "REAL" },
 ] as const;
 
+/**
+ * Describes a table column, including SQL constraints, text editor options,
+ * vector metadata, and foreign key configuration.
+ */
 export type BUN_SQLITE_FieldSchemaType = {
     id?: number | string;
     fieldName?: string;
@@ -174,6 +213,9 @@ WHERE embedding MATCH ? AND k = 1;
     [key in (typeof TextFieldTypesArray)[number]["value"]]?: boolean;
 };
 
+/**
+ * Defines a foreign key relationship from one field to another table column.
+ */
 export interface BUN_SQLITE_ForeignKeyType {
     foreignKeyName?: string;
     destinationTableName?: string;
@@ -183,6 +225,9 @@ export interface BUN_SQLITE_ForeignKeyType {
     cascadeUpdate?: boolean;
 }
 
+/**
+ * Describes a table index and the fields it covers.
+ */
 export interface BUN_SQLITE_IndexSchemaType {
     id?: string | number;
     indexName?: string;
@@ -192,6 +237,9 @@ export interface BUN_SQLITE_IndexSchemaType {
     newTempIndex?: boolean;
 }
 
+/**
+ * Describes a multi-field uniqueness rule for a table.
+ */
 export interface BUN_SQLITE_UniqueConstraintSchemaType {
     id?: string | number;
     constraintName?: string;
@@ -199,15 +247,24 @@ export interface BUN_SQLITE_UniqueConstraintSchemaType {
     constraintTableFields?: BUN_SQLITE_UniqueConstraintFieldType[];
 }
 
+/**
+ * Single field reference inside a unique constraint definition.
+ */
 export interface BUN_SQLITE_UniqueConstraintFieldType {
     value: string;
 }
 
+/**
+ * Field metadata used when generating SQL for indexes.
+ */
 export interface BUN_SQLITE_IndexTableFieldType {
     value: string;
     dataType: string;
 }
 
+/**
+ * Result shape returned by MySQL `SHOW INDEXES` queries.
+ */
 export interface BUN_SQLITE_MYSQL_SHOW_INDEXES_Type {
     Key_name: string;
     Table: string;
@@ -219,6 +276,9 @@ export interface BUN_SQLITE_MYSQL_SHOW_INDEXES_Type {
     Comment: string;
 }
 
+/**
+ * Result shape returned by MySQL `SHOW COLUMNS` queries.
+ */
 export interface BUN_SQLITE_MYSQL_SHOW_COLUMNS_Type {
     Field: string;
     Type: string;
@@ -228,6 +288,9 @@ export interface BUN_SQLITE_MYSQL_SHOW_COLUMNS_Type {
     Extra: string;
 }
 
+/**
+ * Result shape returned by MariaDB `SHOW INDEXES` queries.
+ */
 export interface BUN_SQLITE_MARIADB_SHOW_INDEXES_TYPE {
     Table: string;
     Non_unique: 0 | 1;
@@ -244,12 +307,19 @@ export interface BUN_SQLITE_MARIADB_SHOW_INDEXES_TYPE {
     Ignored?: "YES" | "NO";
 }
 
+/**
+ * Minimal metadata returned when listing MySQL foreign keys.
+ */
 export interface BUN_SQLITE_MYSQL_FOREIGN_KEYS_Type {
     CONSTRAINT_NAME: string;
     CONSTRAINT_SCHEMA: string;
     TABLE_NAME: string;
 }
 
+/**
+ * Database record describing a user-owned database and optional remote sync
+ * metadata.
+ */
 export interface BUN_SQLITE_MYSQL_user_databases_Type {
     id: number;
     user_id: number;
@@ -274,6 +344,9 @@ export interface BUN_SQLITE_MYSQL_user_databases_Type {
     email?: string;
 }
 
+/**
+ * Return value used when converting an uploaded image file to base64.
+ */
 export type ImageInputFileToBase64FunctionReturn = {
     imageBase64?: string;
     imageBase64Full?: string;
@@ -281,6 +354,9 @@ export type ImageInputFileToBase64FunctionReturn = {
     imageSize?: number;
 };
 
+/**
+ * Querystring parameters accepted by generic GET data endpoints.
+ */
 export interface GetReqQueryObject {
     db: string;
     query: string;
@@ -289,6 +365,9 @@ export interface GetReqQueryObject {
     debug?: boolean;
 }
 
+/**
+ * Canonical logged-in user shape shared across auth, session, and API flows.
+ */
 export type DATASQUIREL_LoggedInUser = {
     id: number;
     uuid?: string;
@@ -311,6 +390,9 @@ export type DATASQUIREL_LoggedInUser = {
     [key: string]: any;
 };
 
+/**
+ * Standard authenticated-user response wrapper.
+ */
 export interface AuthenticatedUser {
     success: boolean;
     payload: DATASQUIREL_LoggedInUser | null;
@@ -319,6 +401,9 @@ export interface AuthenticatedUser {
     cookieNames?: any;
 }
 
+/**
+ * Minimal successful user payload returned by user creation flows.
+ */
 export interface SuccessUserObject {
     id: number;
     first_name: string;
@@ -326,6 +411,9 @@ export interface SuccessUserObject {
     email: string;
 }
 
+/**
+ * Return type for helpers that create a user record.
+ */
 export interface AddUserFunctionReturn {
     success: boolean;
     payload?: SuccessUserObject | null;
@@ -333,6 +421,9 @@ export interface AddUserFunctionReturn {
     sqlResult?: any;
 }
 
+/**
+ * Shape exposed by the Google Identity prompt lifecycle callback.
+ */
 export interface GoogleIdentityPromptNotification {
     getMomentType: () => string;
     getDismissedReason: () => string;
@@ -345,6 +436,9 @@ export interface GoogleIdentityPromptNotification {
     isSkippedMoment: () => boolean;
 }
 
+/**
+ * User data accepted by registration and profile-creation flows.
+ */
 export type UserDataPayload = {
     first_name: string;
     last_name: string;
@@ -355,6 +449,9 @@ export type UserDataPayload = {
     [key: string]: any;
 };
 
+/**
+ * Return shape for helpers that fetch a single user.
+ */
 export interface GetUserFunctionReturn {
     success: boolean;
     payload: {
@@ -371,6 +468,9 @@ export interface GetUserFunctionReturn {
     } | null;
 }
 
+/**
+ * Return type for reauthentication flows that refresh auth state.
+ */
 export interface ReauthUserFunctionReturn {
     success: boolean;
     payload: DATASQUIREL_LoggedInUser | null;
@@ -379,11 +479,17 @@ export interface ReauthUserFunctionReturn {
     token?: string;
 }
 
+/**
+ * Return type for user update helpers.
+ */
 export interface UpdateUserFunctionReturn {
     success: boolean;
     payload?: Object[] | string;
 }
 
+/**
+ * Generic success/error wrapper for read operations.
+ */
 export interface GetReturn<R extends any = any> {
     success: boolean;
     payload?: R;
@@ -393,6 +499,9 @@ export interface GetReturn<R extends any = any> {
     finalQuery?: string;
 }
 
+/**
+ * Query parameters used when requesting schema metadata.
+ */
 export interface GetSchemaRequestQuery {
     database?: string;
     table?: string;
@@ -401,13 +510,22 @@ export interface GetSchemaRequestQuery {
     env?: { [k: string]: string };
 }
 
+/**
+ * API credential payload used when a schema request must be authenticated.
+ */
 export interface GetSchemaAPICredentialsParam {
     key: string;
 }
 
+/**
+ * Complete request object for authenticated schema fetches.
+ */
 export type GetSchemaAPIParam = GetSchemaRequestQuery &
     GetSchemaAPICredentialsParam;
 
+/**
+ * Generic response wrapper for write operations.
+ */
 export interface PostReturn {
     success: boolean;
     payload?: Object[] | string | PostInsertReturn;
@@ -416,6 +534,9 @@ export interface PostReturn {
     schema?: BUN_SQLITE_TableSchemaType;
 }
 
+/**
+ * High-level CRUD payload accepted by server-side data mutation handlers.
+ */
 export interface PostDataPayload {
     action: "insert" | "update" | "delete";
     table: string;
@@ -427,6 +548,9 @@ export interface PostDataPayload {
     update?: boolean;
 }
 
+/**
+ * Local-only variant of `PostReturn` used by in-process operations.
+ */
 export interface LocalPostReturn {
     success: boolean;
     payload?: any;
@@ -434,12 +558,19 @@ export interface LocalPostReturn {
     error?: string;
 }
 
+/**
+ * Query object for local write operations that may accept raw SQL or a CRUD
+ * payload.
+ */
 export interface LocalPostQueryObject {
     query: string | PostDataPayload;
     tableName?: string;
     queryValues?: string[];
 }
 
+/**
+ * Insert/update metadata returned by SQL drivers after a write completes.
+ */
 export interface PostInsertReturn {
     fieldCount?: number;
     affectedRows?: number;
@@ -452,6 +583,9 @@ export interface PostInsertReturn {
     error?: string;
 }
 
+/**
+ * Extended user object used within the application runtime.
+ */
 export type UserType = DATASQUIREL_LoggedInUser & {
     isSuperUser?: boolean;
     staticHost?: string;
@@ -459,6 +593,9 @@ export type UserType = DATASQUIREL_LoggedInUser & {
     appName?: string;
 };
 
+/**
+ * Stored API key definition and its associated metadata.
+ */
 export interface ApiKeyDef {
     name: string;
     scope: string;
@@ -466,6 +603,9 @@ export interface ApiKeyDef {
     apiKeyPayload: string;
 }
 
+/**
+ * Aggregate dashboard metrics shown in admin and overview screens.
+ */
 export interface MetricsType {
     dbCount: number;
     tablesCount: number;
@@ -473,6 +613,9 @@ export interface MetricsType {
     apiKeysCount: number;
 }
 
+/**
+ * Shape of the internal MariaDB users table.
+ */
 export interface MYSQL_mariadb_users_table_def {
     id?: number;
     user_id?: number;
@@ -489,13 +632,22 @@ export interface MYSQL_mariadb_users_table_def {
     date_updated_timestamp?: string;
 }
 
+/**
+ * Credentials used to connect to a MariaDB instance as a specific user.
+ */
 export interface MariaDBUserCredType {
     mariadb_user?: string;
     mariadb_host?: string;
     mariadb_pass?: string;
 }
 
+/**
+ * Supported logical operators for server-side query generation.
+ */
 export const ServerQueryOperators = ["AND", "OR"] as const;
+/**
+ * Supported comparison operators for server-side query generation.
+ */
 export const ServerQueryEqualities = [
     "EQUAL",
     "LIKE",
@@ -525,6 +677,10 @@ export const ServerQueryEqualities = [
     "MATCH_BOOLEAN",
 ] as const;
 
+/**
+ * Top-level query-builder input used to generate SELECT statements, joins,
+ * grouping, pagination, and full-text search clauses.
+ */
 export type ServerQueryParam<
     T extends { [k: string]: any } = { [k: string]: any },
     K extends string = string,
@@ -555,6 +711,9 @@ export type ServerQueryParam<
     [key: string]: any;
 };
 
+/**
+ * Represents a single `GROUP BY` field, optionally qualified by table name.
+ */
 export type ServerQueryParamGroupBy<
     T extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -562,6 +721,9 @@ export type ServerQueryParamGroupBy<
     table?: string;
 };
 
+/**
+ * Represents a single `ORDER BY` clause.
+ */
 export type ServerQueryParamOrder<
     T extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -569,6 +731,10 @@ export type ServerQueryParamOrder<
     strategy: "ASC" | "DESC";
 };
 
+/**
+ * Configuration for a full-text search query and the alias used for the score
+ * column.
+ */
 export type ServerQueryParamFullTextSearch<
     T extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -578,6 +744,9 @@ export type ServerQueryParamFullTextSearch<
     scoreAlias: string;
 };
 
+/**
+ * Describes a count subquery that is projected into the main SELECT result.
+ */
 export type ServerQueryParamsCount = {
     table: string;
     /** Alias for the Table From which the count is fetched */
@@ -589,11 +758,17 @@ export type ServerQueryParamsCount = {
     alias: string;
 };
 
+/**
+ * Source/target mapping used inside count subqueries.
+ */
 export type ServerQueryParamsCountSrcTrgMap = {
     table: string;
     field: string;
 };
 
+/**
+ * Declares a selected field and an optional alias for the result set.
+ */
 export type TableSelectFieldsObject<
     T extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -601,6 +776,10 @@ export type TableSelectFieldsObject<
     alias?: string;
 };
 
+/**
+ * Value wrapper used when a query condition needs per-value metadata such as a
+ * custom equality or explicit table/field names.
+ */
 export type ServerQueryValuesObject = {
     value?: string | number;
     /**
@@ -611,6 +790,10 @@ export type ServerQueryValuesObject = {
     fieldName?: string;
 };
 
+/**
+ * All value shapes accepted by a query condition, including arrays used by
+ * operators such as `IN` and `BETWEEN`.
+ */
 export type ServerQueryObjectValue =
     | string
     | number
@@ -619,6 +802,9 @@ export type ServerQueryObjectValue =
     | null
     | (string | number | ServerQueryValuesObject | undefined | null)[];
 
+/**
+ * Describes a single query condition and any nested subconditions for a field.
+ */
 export type ServerQueryObject<
     T extends object = { [key: string]: any },
     K extends string = string,
@@ -646,6 +832,9 @@ export type ServerQueryObject<
     vectorFunction?: string;
 };
 
+/**
+ * Field-to-condition map for server-side query generation.
+ */
 export type ServerQueryQueryObject<
     T extends object = { [key: string]: any },
     K extends string = string,
@@ -653,6 +842,10 @@ export type ServerQueryQueryObject<
     [key in keyof T]: ServerQueryObject<T, K>;
 };
 
+/**
+ * Parameters for authenticated fetch helpers used by the frontend and internal
+ * SDK layers.
+ */
 export type FetchDataParams = {
     path: string;
     method?: (typeof DataCrudRequestMethods)[number];
@@ -661,10 +854,16 @@ export type FetchDataParams = {
     tableName?: string;
 };
 
+/**
+ * Query object accepted by authenticated data-fetch helpers.
+ */
 export type AuthFetchQuery = ServerQueryParam & {
     [key: string]: any;
 };
 
+/**
+ * Join clause definition used by the server query builder.
+ */
 export type ServerQueryParamsJoin<
     Table extends string = string,
     Field extends object = { [key: string]: any },
@@ -694,6 +893,9 @@ export type ServerQueryParamsJoin<
     operator?: (typeof ServerQueryOperators)[number];
 };
 
+/**
+ * Defines how a root-table field maps to a join-table field in an `ON` clause.
+ */
 export type ServerQueryParamsJoinMatchObject<
     Field extends object = { [key: string]: any },
 > = {
@@ -709,11 +911,17 @@ export type ServerQueryParamsJoinMatchObject<
     };
 };
 
+/**
+ * Explicit table/field reference for join match definitions.
+ */
 export type ServerQueryParamsJoinMatchSourceTargetObject = {
     tableName: string;
     fieldName: string;
 };
 
+/**
+ * Payload used when pushing or pulling a schema to or from a remote API.
+ */
 export type ApiConnectBody = {
     url: string;
     key: string;
@@ -723,6 +931,9 @@ export type ApiConnectBody = {
     user_id?: string | number;
 };
 
+/**
+ * Superuser credentials and auth state.
+ */
 export type SuUserType = {
     email: string;
     password: string;
@@ -731,6 +942,10 @@ export type SuUserType = {
     date: number;
 };
 
+/**
+ * Configuration for a remote MariaDB host in replicated or load-balanced
+ * setups.
+ */
 export type MariadbRemoteServerObject = {
     host: string;
     port: number;
@@ -739,12 +954,18 @@ export type MariadbRemoteServerObject = {
     users?: MariadbRemoteServerUserObject[];
 };
 
+/**
+ * Credentials for a user provisioned on a remote MariaDB server.
+ */
 export type MariadbRemoteServerUserObject = {
     name: string;
     password: string;
     host: string;
 };
 
+/**
+ * Standard login response returned by API authentication helpers.
+ */
 export type APILoginFunctionReturn = {
     success: boolean;
     msg?: string;
@@ -756,6 +977,9 @@ export type APILoginFunctionReturn = {
     cookieNames?: any;
 };
 
+/**
+ * Parameters required to create a user through the public API layer.
+ */
 export type APICreateUserFunctionParams = {
     encryptionKey?: string;
     payload: any;
@@ -764,10 +988,16 @@ export type APICreateUserFunctionParams = {
     verify?: boolean;
 };
 
+/**
+ * Function signature for API user-creation handlers.
+ */
 export type APICreateUserFunction = (
     params: APICreateUserFunctionParams,
 ) => Promise<AddUserFunctionReturn>;
 
+/**
+ * Result returned when reconciling a social login with the local user store.
+ */
 export type HandleSocialDbFunctionReturn = {
     success: boolean;
     user?: DATASQUIREL_LoggedInUser | null;
@@ -780,6 +1010,9 @@ export type HandleSocialDbFunctionReturn = {
     error?: any;
 } | null;
 
+/**
+ * Cookie definition used when setting auth/session cookies.
+ */
 export type CookieObject = {
     name: string;
     value: string;
@@ -793,6 +1026,9 @@ export type CookieObject = {
     priority?: "Low" | "Medium" | "High";
 };
 
+/**
+ * Request options accepted by the generic HTTP client helper.
+ */
 export type HttpRequestParams<
     ReqObj extends { [k: string]: any } = { [k: string]: any },
 > = RequestOptions & {
@@ -802,11 +1038,17 @@ export type HttpRequestParams<
     urlEncodedFormBody?: boolean;
 };
 
+/**
+ * Function signature for the generic HTTP request helper.
+ */
 export type HttpRequestFunction<
     ReqObj extends { [k: string]: any } = { [k: string]: any },
     ResObj extends { [k: string]: any } = { [k: string]: any },
 > = (param: HttpRequestParams<ReqObj>) => Promise<HttpFunctionResponse<ResObj>>;
 
+/**
+ * Normalized response returned by the generic HTTP request helper.
+ */
 export type HttpFunctionResponse<
     ResObj extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -817,6 +1059,9 @@ export type HttpFunctionResponse<
     requestedPath?: string;
 };
 
+/**
+ * GET request payload for API data reads.
+ */
 export type ApiGetQueryObject<
     T extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -825,6 +1070,9 @@ export type ApiGetQueryObject<
     dbFullName?: string;
 };
 
+/**
+ * Uppercase HTTP methods supported by the CRUD helpers.
+ */
 export const DataCrudRequestMethods = [
     "GET",
     "POST",
@@ -834,6 +1082,10 @@ export const DataCrudRequestMethods = [
     "OPTIONS",
 ] as const;
 
+/**
+ * Lowercase variant of the supported HTTP methods, used where string casing
+ * must match external APIs.
+ */
 export const DataCrudRequestMethodsLowerCase = [
     "get",
     "post",
@@ -843,6 +1095,9 @@ export const DataCrudRequestMethodsLowerCase = [
     "options",
 ] as const;
 
+/**
+ * Runtime parameters passed to generic CRUD handlers.
+ */
 export type DsqlMethodCrudParam<
     T extends { [key: string]: any } = { [key: string]: any },
 > = {
@@ -863,6 +1118,9 @@ export type DsqlMethodCrudParam<
     debug?: boolean;
 };
 
+/**
+ * Hook used to mutate input data before a CRUD action is executed.
+ */
 export type DsqlCrudTransformDataFunction<
     T extends { [key: string]: any } = { [key: string]: any },
 > = (params: {
@@ -872,6 +1130,9 @@ export type DsqlCrudTransformDataFunction<
     reqMethod: (typeof DataCrudRequestMethods)[number];
 }) => Promise<T>;
 
+/**
+ * Hook used to mutate query input before a CRUD action is executed.
+ */
 export type DsqlCrudTransformQueryFunction<
     T extends { [key: string]: any } = { [key: string]: any },
 > = (params: {
@@ -880,8 +1141,14 @@ export type DsqlCrudTransformQueryFunction<
     reqMethod: (typeof DataCrudRequestMethods)[number];
 }) => Promise<DsqlCrudQueryObject<T>>;
 
+/**
+ * High-level CRUD actions supported by the DSQL helpers.
+ */
 export const DsqlCrudActions = ["insert", "update", "delete", "get"] as const;
 
+/**
+ * Query object used by CRUD helpers, built on top of the server query builder.
+ */
 export type DsqlCrudQueryObject<
     T extends { [key: string]: any } = { [key: string]: any },
     K extends string = string,
@@ -889,6 +1156,9 @@ export type DsqlCrudQueryObject<
     query?: ServerQueryQueryObject<T, K>;
 };
 
+/**
+ * Parameters used to generate a SQL `DELETE` statement.
+ */
 export type SQLDeleteGeneratorParams<
     T extends { [key: string]: any } = { [key: string]: any },
 > = {
@@ -899,6 +1169,9 @@ export type SQLDeleteGeneratorParams<
     data?: any;
 };
 
+/**
+ * Single key/value predicate used by the delete SQL generator.
+ */
 export type SQLDeleteData<
     T extends { [key: string]: any } = { [key: string]: any },
 > = {
@@ -907,63 +1180,22 @@ export type SQLDeleteData<
     operator?: (typeof ServerQueryEqualities)[number];
 };
 
+/**
+ * Prebuilt SQL where-clause fragment and its bound parameters.
+ */
 export type DsqlCrudParamWhereClause = {
     clause: string;
     params?: string[];
 };
 
+/**
+ * Callback signature used when surfacing internal errors to callers.
+ */
 export type ErrorCallback = (title: string, error: Error, data?: any) => void;
 
-export interface MariaDBUser {
-    Host?: string;
-    User?: string;
-    Password?: string;
-    Select_priv?: string;
-    Insert_priv?: string;
-    Update_priv?: string;
-    Delete_priv?: string;
-    Create_priv?: string;
-    Drop_priv?: string;
-    Reload_priv?: string;
-    Shutdown_priv?: string;
-    Process_priv?: string;
-    File_priv?: string;
-    Grant_priv?: string;
-    References_priv?: string;
-    Index_priv?: string;
-    Alter_priv?: string;
-    Show_db_priv?: string;
-    Super_priv?: string;
-    Create_tmp_table_priv?: string;
-    Lock_tables_priv?: string;
-    Execute_priv?: string;
-    Repl_slave_priv?: string;
-    Repl_client_priv?: string;
-    Create_view_priv?: string;
-    Show_view_priv?: string;
-    Create_routine_priv?: string;
-    Alter_routine_priv?: string;
-    Create_user_priv?: string;
-    Event_priv?: string;
-    Trigger_priv?: string;
-    Create_tablespace_priv?: string;
-    Delete_history_priv?: string;
-    ssl_type?: string;
-    ssl_cipher?: string;
-    x509_issuer?: string;
-    x509_subject?: string;
-    max_questions?: number;
-    max_updates?: number;
-    max_connections?: number;
-    max_user_connections?: number;
-    plugin?: string;
-    authentication_string?: string;
-    password_expired?: string;
-    is_role?: string;
-    default_role?: string;
-    max_statement_time?: number;
-}
-
+/**
+ * Reserved query parameter names used throughout the API layer.
+ */
 export const QueryFields = [
     "duplicate",
     "user_id",
@@ -973,16 +1205,26 @@ export const QueryFields = [
     "db_slug",
 ] as const;
 
+/**
+ * Minimal representation of a local folder entry.
+ */
 export type LocalFolderType = {
     name: string;
     isPrivate: boolean;
 };
 
+/**
+ * SQL string and bound parameters produced during query generation.
+ */
 export type ResponseQueryObject = {
     sql?: string;
     params?: (string | number)[];
 };
 
+/**
+ * Common API response wrapper used by data, auth, media, and utility
+ * endpoints.
+ */
 export type APIResponseObject<
     T extends { [k: string]: any } = { [k: string]: any },
 > = {
@@ -1028,6 +1270,9 @@ export type DockerCompose = {
     name: string;
 };
 
+/**
+ * Supported Docker Compose service names used by the deployment helpers.
+ */
 export const DockerComposeServices = [
     "setup",
     "cron",
@@ -1046,10 +1291,16 @@ export const DockerComposeServices = [
     "web-app-post-db-setup",
 ] as const;
 
+/**
+ * Map of compose service names to service definitions.
+ */
 export type DockerComposeServicesType = {
     [key in (typeof DockerComposeServices)[number]]: DockerComposeServiceWithBuildObject;
 };
 
+/**
+ * Docker Compose network definitions.
+ */
 export type DockerComposeNetworks = {
     [k: string]: {
         driver?: "bridge";
@@ -1060,11 +1311,17 @@ export type DockerComposeNetworks = {
     };
 };
 
+/**
+ * Static network config for a Docker Compose network.
+ */
 export type DockerComposeNetworkConfigObject = {
     subnet: string;
     gateway: string;
 };
 
+/**
+ * Service definition for compose services that are built from source.
+ */
 export type DockerComposeServiceWithBuildObject = {
     build: DockerComposeServicesBuildObject;
     env_file: string;
@@ -1083,6 +1340,9 @@ export type DockerComposeServiceWithBuildObject = {
     user?: string;
 };
 
+/**
+ * Service definition for compose services that use a prebuilt image.
+ */
 export type DockerComposeServiceWithImage = Omit<
     DockerComposeServiceWithBuildObject,
     "build"
@@ -1090,17 +1350,26 @@ export type DockerComposeServiceWithImage = Omit<
     image: string;
 };
 
+/**
+ * Build instructions for a Docker Compose service.
+ */
 export type DockerComposeServicesBuildObject = {
     context: string;
     dockerfile: string;
 };
 
+/**
+ * Per-network addressing information for a Docker Compose service.
+ */
 export type DockerComposeServiceNetworkObject = {
     [k: string]: {
         ipv4_address: string;
     };
 };
 
+/**
+ * Metadata recorded for a table cloned from another database.
+ */
 export type ClonedTableInfo = {
     dbId?: string | number;
     tableId?: string | number;
@@ -1108,6 +1377,9 @@ export type ClonedTableInfo = {
     keepDataUpdated?: boolean;
 };
 
+/**
+ * Common columns present on default/generated table entries.
+ */
 export type DefaultEntryType = {
     id?: number;
     uuid?: string;
@@ -1121,40 +1393,66 @@ export type DefaultEntryType = {
     [k: string]: string | number | null;
 };
 
+/**
+ * Supported index strategies for generated schemas.
+ */
 export const IndexTypes = ["regular", "full_text", "vector"] as const;
 
+/**
+ * Structured error payload captured alongside generated SQL.
+ */
 export type BUNSQLITEErrorObject = {
     sql?: string;
     sqlValues?: any[];
     error?: string;
 };
 
+/**
+ * Output of the SQL insert generator.
+ */
 export interface SQLInsertGenReturn {
     query: string;
     values: SQLInsertGenValueType[];
 }
 
+/**
+ * Values accepted by the SQL insert generator, including vector buffers.
+ */
 export type SQLInsertGenValueType =
     | string
     | number
     | Float32Array<ArrayBuffer>
     | Buffer<ArrayBuffer>;
 
+/**
+ * Callback variant used when a generated insert value needs a custom
+ * placeholder.
+ */
 export type SQLInsertGenDataFn = () => {
     placeholder: string;
     value: SQLInsertGenValueType;
 };
 
+/**
+ * Record shape accepted by the SQL insert generator.
+ */
 export type SQLInsertGenDataType = {
     [k: string]: SQLInsertGenValueType | SQLInsertGenDataFn | undefined | null;
 };
 
+/**
+ * Parameters used to build a multi-row SQL insert statement.
+ */
 export type SQLInsertGenParams = {
     data: SQLInsertGenDataType[];
     tableName: string;
     dbFullName?: string;
 };
 
+/**
+ * Library configuration used to locate the SQLite database, schema file,
+ * generated types, and backup settings.
+ */
 export type BunSQLiteConfig = {
     db_name: string;
     /**
@@ -1178,11 +1476,17 @@ export type BunSQLiteConfig = {
     typedef_file_path?: string;
 };
 
+/**
+ * Resolved Bun SQLite config paired with the loaded database schema.
+ */
 export type BunSQLiteConfigReturn = {
     config: BunSQLiteConfig;
     dbSchema: BUN_SQLITE_DatabaseSchemaType;
 };
 
+/**
+ * Default fields automatically suggested for new tables.
+ */
 export const DefaultFields: BUN_SQLITE_FieldSchemaType[] = [
     {
         fieldName: "id",

@@ -3,6 +3,7 @@ import { Database } from "bun:sqlite";
 import _ from "lodash";
 import DbClient from ".";
 import { AppData } from "../../data/app-data";
+import { readLiveSchema } from "../../functions/live-schema";
 // Schema Manager Class
 class SQLiteSchemaManager {
     db;
@@ -60,8 +61,21 @@ class SQLiteSchemaManager {
      * Drop tables that are no longer in the schema
      */
     async dropRemovedTables(existingTables, schemaTables) {
+        console.log(`Cleaning up tables ...`);
         const tablesToDrop = existingTables.filter((t) => !schemaTables.includes(t) &&
             !schemaTables.find((scT) => t.startsWith(scT + "_")));
+        const currentSchema = readLiveSchema();
+        if (currentSchema?.tables?.[0]) {
+            for (let i = 0; i < currentSchema.tables.length; i++) {
+                const table = currentSchema.tables[i];
+                if (!table?.tableName)
+                    continue;
+                const does_table_exist = schemaTables.find((t) => t == table.tableName);
+                if (!does_table_exist) {
+                    tablesToDrop.push(table.tableName);
+                }
+            }
+        }
         for (const tableName of tablesToDrop) {
             console.log(`Dropping table: ${tableName}`);
             this.db.run(`DROP TABLE IF EXISTS "${tableName}"`);

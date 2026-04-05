@@ -1,3 +1,7 @@
+/**
+ * User fields that should be omitted from general-purpose payloads and public
+ * responses.
+ */
 export const UsersOmitedFields = [
     "password",
     "social_id",
@@ -9,10 +13,17 @@ export const UsersOmitedFields = [
     "date_updated_code",
     "date_updated_timestamp",
 ];
+/**
+ * Supported MariaDB collations that can be applied at the database or table
+ * level.
+ */
 export const MariaDBCollations = [
     "utf8mb4_bin",
     "utf8mb4_unicode_520_ci",
 ];
+/**
+ * Supported editor/content modes for text fields.
+ */
 export const TextFieldTypesArray = [
     { title: "Plain Text", value: "plain" },
     { title: "Rich Text", value: "richText" },
@@ -25,13 +36,22 @@ export const TextFieldTypesArray = [
     { title: "Shell", value: "shell" },
     { title: "Code", value: "code" },
 ];
+/**
+ * Core SQLite column types supported by the schema builder.
+ */
 export const BUN_SQLITE_DATATYPES = [
     { value: "TEXT" },
     { value: "INTEGER" },
     { value: "BLOB" },
     { value: "REAL" },
 ];
+/**
+ * Supported logical operators for server-side query generation.
+ */
 export const ServerQueryOperators = ["AND", "OR"];
+/**
+ * Supported comparison operators for server-side query generation.
+ */
 export const ServerQueryEqualities = [
     "EQUAL",
     "LIKE",
@@ -60,6 +80,9 @@ export const ServerQueryEqualities = [
     "MATCH",
     "MATCH_BOOLEAN",
 ];
+/**
+ * Uppercase HTTP methods supported by the CRUD helpers.
+ */
 export const DataCrudRequestMethods = [
     "GET",
     "POST",
@@ -68,6 +91,10 @@ export const DataCrudRequestMethods = [
     "DELETE",
     "OPTIONS",
 ];
+/**
+ * Lowercase variant of the supported HTTP methods, used where string casing
+ * must match external APIs.
+ */
 export const DataCrudRequestMethodsLowerCase = [
     "get",
     "post",
@@ -76,7 +103,13 @@ export const DataCrudRequestMethodsLowerCase = [
     "delete",
     "options",
 ];
+/**
+ * High-level CRUD actions supported by the DSQL helpers.
+ */
 export const DsqlCrudActions = ["insert", "update", "delete", "get"];
+/**
+ * Reserved query parameter names used throughout the API layer.
+ */
 export const QueryFields = [
     "duplicate",
     "user_id",
@@ -85,6 +118,9 @@ export const QueryFields = [
     "table_id",
     "db_slug",
 ];
+/**
+ * Supported Docker Compose service names used by the deployment helpers.
+ */
 export const DockerComposeServices = [
     "setup",
     "cron",
@@ -102,7 +138,13 @@ export const DockerComposeServices = [
     "db-cron",
     "web-app-post-db-setup",
 ];
+/**
+ * Supported index strategies for generated schemas.
+ */
 export const IndexTypes = ["regular", "full_text", "vector"];
+/**
+ * Default fields automatically suggested for new tables.
+ */
 export const DefaultFields = [
     {
         fieldName: "id",
