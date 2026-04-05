@@ -104,6 +104,9 @@ export interface BUN_SQLITE_TableSchemaType {
      * If this is a vector table
      */
     isVector?: boolean;
+    /**
+     * Type of vector. Defaults to `vec0`
+     */
     vectorType?: string;
 }
 

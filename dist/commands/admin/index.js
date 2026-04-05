@@ -6,6 +6,7 @@ import { select } from "@inquirer/prompts";
 import { Database } from "bun:sqlite";
 import listTables from "./list-tables";
 import runSQL from "./run-sql";
+import * as sqliteVec from "sqlite-vec";
 export default function () {
     return new Command("admin")
         .description("View Tables and Data, Run SQL Queries, Etc.")
@@ -13,6 +14,7 @@ export default function () {
         const { config } = await init();
         const { db_file_path } = grabDBDir({ config });
         const db = new Database(db_file_path);
+        sqliteVec.load(db);
         console.log(chalk.bold(chalk.blue("\nBun SQLite Admin\n")));
         try {
             while (true) {

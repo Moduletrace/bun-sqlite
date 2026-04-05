@@ -102,12 +102,9 @@ class SQLiteSchemaManager {
             await this.createTable(table);
             this.insertDbManagerTable(table.tableName);
         }
-        else if (!table.isVector) {
+        else {
             // Update existing table
             await this.updateTable(table);
-        }
-        else {
-            return;
         }
         // Sync indexes
         await this.syncIndexes(table);
@@ -133,9 +130,9 @@ class SQLiteSchemaManager {
         const columns = [];
         const foreignKeys = [];
         for (const field of new_table.fields) {
-            const columnDef = this.buildColumnDefinition(field);
+            const columnDef = this.buildColumnDefinition(field, table.isVector);
             columns.push(columnDef);
-            if (field.foreignKey) {
+            if (field.foreignKey && !table.isVector) {
                 foreignKeys.push(this.buildForeignKeyConstraint(field));
             }
         }
@@ -224,6 +221,12 @@ class SQLiteSchemaManager {
         const sql = `ALTER TABLE "${tableName}" ADD COLUMN ${cleanDef}`;
         this.db.run(sql);
     }
+    checkIfTableExists(table) {
+        const tableExists = this.db
+            .query(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`)
+            .get(table);
+        return Boolean(tableExists?.name);
+    }
     /**
      * Recreate table (for complex schema changes)
      */
@@ -232,11 +235,14 @@ class SQLiteSchemaManager {
             if (!this.recreate_vector_table) {
                 return;
             }
-            console.log(`Recreating vector table: ${table.tableName}`);
-            const existingRows = this.db
-                .query(`SELECT * FROM "${table.tableName}"`)
-                .all();
-            this.db.run(`DROP TABLE "${table.tableName}"`);
+            const does_table_exist = this.checkIfTableExists(table.tableName);
+            let existingRows = [];
+            if (does_table_exist) {
+                existingRows = this.db
+                    .query(`SELECT * FROM "${table.tableName}"`)
+                    .all();
+                this.db.run(`DROP TABLE "${table.tableName}"`);
+            }
             await this.createTable(table);
             if (existingRows.length > 0) {
                 for (let i = 0; i < existingRows.length; i++) {
@@ -274,7 +280,7 @@ class SQLiteSchemaManager {
     /**
      * Build column definition SQL
      */
-    buildColumnDefinition(field) {
+    buildColumnDefinition(field, is_vector) {
         if (!field.fieldName) {
             throw new Error("Field name is required");
         }
@@ -284,7 +290,12 @@ class SQLiteSchemaManager {
         const parts = [fieldName];
         // Data type mapping
         const dataType = this.mapDataType(field);
-        parts.push(dataType);
+        if (dataType == "BLOB") {
+            parts.push("FLOAT[128]");
+        }
+        else {
+            parts.push(dataType);
+        }
         // Primary key
         if (field.primaryKey) {
             parts.push("PRIMARY KEY");

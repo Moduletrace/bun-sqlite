@@ -44,6 +44,7 @@ declare class SQLiteSchemaManager {
      * Add a new column to existing table
      */
     private addColumn;
+    private checkIfTableExists;
     /**
      * Recreate table (for complex schema changes)
      */

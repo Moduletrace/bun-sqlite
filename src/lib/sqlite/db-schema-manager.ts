@@ -5,6 +5,7 @@ import _ from "lodash";
 import DbClient from ".";
 import type {
     BUN_SQLITE_DatabaseSchemaType,
+    BUN_SQLITE_DATATYPES,
     BUN_SQLITE_FieldSchemaType,
     BUN_SQLITE_TableSchemaType,
 } from "../../types";
@@ -159,11 +160,9 @@ class SQLiteSchemaManager {
             // Create new table
             await this.createTable(table);
             this.insertDbManagerTable(table.tableName);
-        } else if (!table.isVector) {
+        } else {
             // Update existing table
             await this.updateTable(table);
-        } else {
-            return;
         }
 
         // Sync indexes
@@ -203,10 +202,10 @@ class SQLiteSchemaManager {
         const foreignKeys: string[] = [];
 
         for (const field of new_table.fields) {
-            const columnDef = this.buildColumnDefinition(field);
+            const columnDef = this.buildColumnDefinition(field, table.isVector);
             columns.push(columnDef);
 
-            if (field.foreignKey) {
+            if (field.foreignKey && !table.isVector) {
                 foreignKeys.push(this.buildForeignKeyConstraint(field));
             }
         }
@@ -326,6 +325,16 @@ class SQLiteSchemaManager {
         this.db.run(sql);
     }
 
+    private checkIfTableExists(table: string) {
+        const tableExists = this.db
+            .query(
+                `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+            )
+            .get(table) as any;
+
+        return Boolean(tableExists?.name);
+    }
+
     /**
      * Recreate table (for complex schema changes)
      */
@@ -337,13 +346,18 @@ class SQLiteSchemaManager {
                 return;
             }
 
-            console.log(`Recreating vector table: ${table.tableName}`);
+            const does_table_exist = this.checkIfTableExists(table.tableName);
 
-            const existingRows = this.db
-                .query(`SELECT * FROM "${table.tableName}"`)
-                .all() as { [k: string]: any }[];
+            let existingRows: { [k: string]: any }[] = [];
 
-            this.db.run(`DROP TABLE "${table.tableName}"`);
+            if (does_table_exist) {
+                existingRows = this.db
+                    .query(`SELECT * FROM "${table.tableName}"`)
+                    .all() as { [k: string]: any }[];
+
+                this.db.run(`DROP TABLE "${table.tableName}"`);
+            }
+
             await this.createTable(table);
 
             if (existingRows.length > 0) {
@@ -404,7 +418,10 @@ class SQLiteSchemaManager {
     /**
      * Build column definition SQL
      */
-    private buildColumnDefinition(field: BUN_SQLITE_FieldSchemaType): string {
+    private buildColumnDefinition(
+        field: BUN_SQLITE_FieldSchemaType,
+        is_vector?: boolean,
+    ): string {
         if (!field.fieldName) {
             throw new Error("Field name is required");
         }
@@ -417,7 +434,11 @@ class SQLiteSchemaManager {
 
         // Data type mapping
         const dataType = this.mapDataType(field);
-        parts.push(dataType);
+        if (dataType == "BLOB") {
+            parts.push("FLOAT[128]");
+        } else {
+            parts.push(dataType);
+        }
 
         // Primary key
         if (field.primaryKey) {
@@ -459,13 +480,15 @@ class SQLiteSchemaManager {
     /**
      * Map DSQL data types to SQLite types
      */
-    private mapDataType(field: BUN_SQLITE_FieldSchemaType): string {
+    private mapDataType(
+        field: BUN_SQLITE_FieldSchemaType,
+    ): (typeof BUN_SQLITE_DATATYPES)[number]["value"] {
         const dataType = field.dataType?.toLowerCase() || "text";
         const vectorSize = field.vectorSize || 1536;
 
         // Vector Embeddings
         if (field.isVector) {
-            return `FLOAT[${vectorSize}]`;
+            return `FLOAT[${vectorSize}]` as any;
         }
 
         // Integer types
