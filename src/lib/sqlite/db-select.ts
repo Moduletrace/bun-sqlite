@@ -23,6 +23,8 @@ export default async function DbSelect<
     count,
     targetId,
 }: Params<Schema, Table>): Promise<APIResponseObject<Schema>> {
+    let sqlObj: ReturnType<typeof sqlGenerator> | null = null;
+
     try {
         let finalQuery = query || {};
 
@@ -39,7 +41,7 @@ export default async function DbSelect<
             );
         }
 
-        const sqlObj = sqlGenerator({
+        sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
             count,
@@ -73,6 +75,9 @@ export default async function DbSelect<
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

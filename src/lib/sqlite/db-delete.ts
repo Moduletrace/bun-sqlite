@@ -20,6 +20,8 @@ export default async function DbDelete<
     query,
     targetId,
 }: Params<Schema, Table>): Promise<APIResponseObject> {
+    let sqlObj: ReturnType<typeof sqlGenerator> | null = null;
+
     try {
         let finalQuery = query || {};
 
@@ -36,17 +38,17 @@ export default async function DbDelete<
             );
         }
 
-        const sqlQueryObj = sqlGenerator({
+        sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });
 
-        const whereClause = sqlQueryObj.string.match(/WHERE .*/)?.[0];
+        const whereClause = sqlObj.string.match(/WHERE .*/)?.[0];
 
         if (whereClause) {
             let sql = `DELETE FROM ${table} ${whereClause}`;
 
-            const res = DbClient.run(sql, sqlQueryObj.values);
+            const res = DbClient.run(sql, sqlObj.values);
 
             return {
                 success: Boolean(res.changes),
@@ -55,20 +57,25 @@ export default async function DbDelete<
                     insertId: Number(res.lastInsertRowid),
                 },
                 debug: {
-                    sql,
-                    values: sqlQueryObj.values,
+                    sqlObj,
                 },
             };
         } else {
             return {
                 success: false,
                 msg: `No WHERE clause`,
+                debug: {
+                    sqlObj,
+                },
             };
         }
     } catch (error: any) {
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

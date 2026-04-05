@@ -2,6 +2,7 @@ import DbClient from ".";
 import _ from "lodash";
 import sqlGenerator from "../../utils/sql-generator";
 export default async function DbDelete({ table, query, targetId, }) {
+    let sqlObj = null;
     try {
         let finalQuery = query || {};
         if (targetId) {
@@ -13,14 +14,14 @@ export default async function DbDelete({ table, query, targetId, }) {
                 },
             });
         }
-        const sqlQueryObj = sqlGenerator({
+        sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });
-        const whereClause = sqlQueryObj.string.match(/WHERE .*/)?.[0];
+        const whereClause = sqlObj.string.match(/WHERE .*/)?.[0];
         if (whereClause) {
             let sql = `DELETE FROM ${table} ${whereClause}`;
-            const res = DbClient.run(sql, sqlQueryObj.values);
+            const res = DbClient.run(sql, sqlObj.values);
             return {
                 success: Boolean(res.changes),
                 postInsertReturn: {
@@ -28,8 +29,7 @@ export default async function DbDelete({ table, query, targetId, }) {
                     insertId: Number(res.lastInsertRowid),
                 },
                 debug: {
-                    sql,
-                    values: sqlQueryObj.values,
+                    sqlObj,
                 },
             };
         }
@@ -37,6 +37,9 @@ export default async function DbDelete({ table, query, targetId, }) {
             return {
                 success: false,
                 msg: `No WHERE clause`,
+                debug: {
+                    sqlObj,
+                },
             };
         }
     }
@@ -44,6 +47,9 @@ export default async function DbDelete({ table, query, targetId, }) {
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

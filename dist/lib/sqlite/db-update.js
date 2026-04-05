@@ -2,6 +2,7 @@ import DbClient from ".";
 import _ from "lodash";
 import sqlGenerator from "../../utils/sql-generator";
 export default async function DbUpdate({ table, data, query, targetId, }) {
+    let sqlObj = null;
     try {
         let finalQuery = query || {};
         if (targetId) {
@@ -13,12 +14,12 @@ export default async function DbUpdate({ table, data, query, targetId, }) {
                 },
             });
         }
-        const sqlQueryObj = sqlGenerator({
+        sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });
         let values = [];
-        const whereClause = sqlQueryObj.string.match(/WHERE .*/)?.[0];
+        const whereClause = sqlObj.string.match(/WHERE .*/)?.[0];
         if (whereClause) {
             let sql = `UPDATE ${table} SET`;
             const finalData = {
@@ -38,7 +39,7 @@ export default async function DbUpdate({ table, data, query, targetId, }) {
                 }
             }
             sql += ` ${whereClause}`;
-            values = [...values, ...sqlQueryObj.values];
+            values = [...values, ...sqlObj.values];
             const res = DbClient.run(sql, values);
             return {
                 success: Boolean(res.changes),
@@ -47,8 +48,7 @@ export default async function DbUpdate({ table, data, query, targetId, }) {
                     insertId: Number(res.lastInsertRowid),
                 },
                 debug: {
-                    sql,
-                    values,
+                    sqlObj,
                 },
             };
         }
@@ -63,6 +63,9 @@ export default async function DbUpdate({ table, data, query, targetId, }) {
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

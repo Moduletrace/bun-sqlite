@@ -22,6 +22,8 @@ export default async function DbUpdate<
     query,
     targetId,
 }: Params<Schema, Table>): Promise<APIResponseObject> {
+    let sqlObj: ReturnType<typeof sqlGenerator> | null = null;
+
     try {
         let finalQuery = query || {};
 
@@ -38,14 +40,14 @@ export default async function DbUpdate<
             );
         }
 
-        const sqlQueryObj = sqlGenerator({
+        sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });
 
         let values: (string | number)[] = [];
 
-        const whereClause = sqlQueryObj.string.match(/WHERE .*/)?.[0];
+        const whereClause = sqlObj.string.match(/WHERE .*/)?.[0];
 
         if (whereClause) {
             let sql = `UPDATE ${table} SET`;
@@ -74,7 +76,7 @@ export default async function DbUpdate<
             }
 
             sql += ` ${whereClause}`;
-            values = [...values, ...sqlQueryObj.values];
+            values = [...values, ...sqlObj.values];
 
             const res = DbClient.run(sql, values);
 
@@ -85,8 +87,7 @@ export default async function DbUpdate<
                     insertId: Number(res.lastInsertRowid),
                 },
                 debug: {
-                    sql,
-                    values,
+                    sqlObj,
                 },
             };
         } else {
@@ -99,6 +100,9 @@ export default async function DbUpdate<
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

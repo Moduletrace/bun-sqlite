@@ -1,16 +1,18 @@
 import DbClient from ".";
 import sqlInsertGenerator from "../../utils/sql-insert-generator";
 export default async function DbInsert({ table, data }) {
+    let sqlObj = null;
     try {
         const finalData = data.map((d) => ({
             ...d,
             created_at: Date.now(),
             updated_at: Date.now(),
         }));
-        const sqlObj = sqlInsertGenerator({
-            tableName: table,
-            data: finalData,
-        });
+        sqlObj =
+            sqlInsertGenerator({
+                tableName: table,
+                data: finalData,
+            }) || null;
         const res = DbClient.run(sqlObj?.query || "", sqlObj?.values || []);
         return {
             success: Boolean(Number(res.lastInsertRowid)),
@@ -27,6 +29,9 @@ export default async function DbInsert({ table, data }) {
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

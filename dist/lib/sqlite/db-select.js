@@ -3,6 +3,7 @@ import DbClient from ".";
 import _ from "lodash";
 import sqlGenerator from "../../utils/sql-generator";
 export default async function DbSelect({ table, query, count, targetId, }) {
+    let sqlObj = null;
     try {
         let finalQuery = query || {};
         if (targetId) {
@@ -14,7 +15,7 @@ export default async function DbSelect({ table, query, count, targetId, }) {
                 },
             });
         }
-        const sqlObj = sqlGenerator({
+        sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
             count,
@@ -43,6 +44,9 @@ export default async function DbSelect({ table, query, count, targetId, }) {
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }

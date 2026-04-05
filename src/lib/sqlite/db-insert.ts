@@ -1,5 +1,5 @@
 import DbClient from ".";
-import type { APIResponseObject } from "../../types";
+import type { APIResponseObject, SQLInsertGenReturn } from "../../types";
 import sqlInsertGenerator from "../../utils/sql-insert-generator";
 
 type Params<
@@ -14,6 +14,8 @@ export default async function DbInsert<
     Schema extends { [k: string]: any } = { [k: string]: any },
     Table extends string = string,
 >({ table, data }: Params<Schema, Table>): Promise<APIResponseObject> {
+    let sqlObj: SQLInsertGenReturn | null = null;
+
     try {
         const finalData: { [k: string]: any }[] = data.map((d) => ({
             ...d,
@@ -21,10 +23,11 @@ export default async function DbInsert<
             updated_at: Date.now(),
         }));
 
-        const sqlObj = sqlInsertGenerator({
-            tableName: table,
-            data: finalData as any[],
-        });
+        sqlObj =
+            sqlInsertGenerator({
+                tableName: table,
+                data: finalData as any[],
+            }) || null;
 
         const res = DbClient.run(sqlObj?.query || "", sqlObj?.values || []);
 
@@ -42,6 +45,9 @@ export default async function DbInsert<
         return {
             success: false,
             error: error.message,
+            debug: {
+                sqlObj,
+            },
         };
     }
 }
