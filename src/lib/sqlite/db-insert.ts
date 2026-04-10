@@ -1,6 +1,7 @@
 import DbClient from ".";
 import type { APIResponseObject, SQLInsertGenReturn } from "../../types";
 import sqlInsertGenerator from "../../utils/sql-insert-generator";
+import grabDuplicateSafeInsertSql from "../grab-duplicate-safe-insert-sql";
 
 type Params<
     Schema extends { [k: string]: any } = { [k: string]: any },
@@ -8,12 +9,17 @@ type Params<
 > = {
     table: Table;
     data: Schema[];
+    update_on_duplicate?: boolean;
 };
 
 export default async function DbInsert<
     Schema extends { [k: string]: any } = { [k: string]: any },
     Table extends string = string,
->({ table, data }: Params<Schema, Table>): Promise<APIResponseObject> {
+>({
+    table,
+    data,
+    update_on_duplicate,
+}: Params<Schema, Table>): Promise<APIResponseObject> {
     let sqlObj: SQLInsertGenReturn | null = null;
 
     try {
@@ -29,7 +35,15 @@ export default async function DbInsert<
                 data: finalData as any[],
             }) || null;
 
-        const res = DbClient.run(sqlObj?.query || "", sqlObj?.values || []);
+        let sql = sqlObj?.query || "";
+
+        if (update_on_duplicate && data[0]) {
+            sql = await grabDuplicateSafeInsertSql({ data, table, sql });
+        }
+
+        (sqlObj || ({} as any)).query = sql;
+
+        const res = DbClient.run(sql, sqlObj?.values || []);
 
         return {
             success: Boolean(Number(res.lastInsertRowid)),

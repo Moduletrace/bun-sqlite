@@ -1,6 +1,7 @@
 import DbClient from ".";
 import sqlInsertGenerator from "../../utils/sql-insert-generator";
-export default async function DbInsert({ table, data }) {
+import grabDuplicateSafeInsertSql from "../grab-duplicate-safe-insert-sql";
+export default async function DbInsert({ table, data, update_on_duplicate, }) {
     let sqlObj = null;
     try {
         const finalData = data.map((d) => ({
@@ -13,7 +14,12 @@ export default async function DbInsert({ table, data }) {
                 tableName: table,
                 data: finalData,
             }) || null;
-        const res = DbClient.run(sqlObj?.query || "", sqlObj?.values || []);
+        let sql = sqlObj?.query || "";
+        if (update_on_duplicate && data[0]) {
+            sql = await grabDuplicateSafeInsertSql({ data, table, sql });
+        }
+        (sqlObj || {}).query = sql;
+        const res = DbClient.run(sql, sqlObj?.values || []);
         return {
             success: Boolean(Number(res.lastInsertRowid)),
             postInsertReturn: {

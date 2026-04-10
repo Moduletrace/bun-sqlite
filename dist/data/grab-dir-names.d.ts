@@ -7,5 +7,6 @@ export default function grabDirNames(params?: Params): {
     BUN_SQLITE_DIR: string;
     BUN_SQLITE_TEMP_DIR: string;
     BUN_SQLITE_LIVE_SCHEMA: string;
+    BUN_SQLITE_TEMP_DB_FILE_PATH: string;
 };
 export {};

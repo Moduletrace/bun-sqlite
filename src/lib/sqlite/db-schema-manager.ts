@@ -434,11 +434,7 @@ class SQLiteSchemaManager {
 
         // Data type mapping
         const dataType = this.mapDataType(field);
-        if (dataType == "BLOB") {
-            parts.push("FLOAT[128]");
-        } else {
-            parts.push(dataType);
-        }
+        parts.push(dataType);
 
         // Primary key
         if (field.primaryKey) {
