@@ -3,10 +3,11 @@ export default async function ({ sql: passed_sql, table, data }) {
     let sql = passed_sql;
     const { dbSchema } = await init();
     const table_schema = dbSchema.tables.find((t) => t.tableName == table);
+    const now = Date.now();
     if (table_schema?.tableName) {
-        const set_sql = Object.keys(data[0])
-            .map((field) => `${field} = excluded.${field}`)
-            .join(", ");
+        const set_sql_arr = Object.keys(data[0]).map((field) => `${field} = excluded.${field}`);
+        set_sql_arr.push(`updated_at = ${now}`);
+        const set_sql = set_sql_arr.join(", ");
         const unique_fields = table_schema.fields.filter((f) => f.unique);
         for (let i = 0; i < unique_fields.length; i++) {
             const field = unique_fields[i];
