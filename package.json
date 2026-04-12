@@ -1,6 +1,6 @@
 {
     "name": "@moduletrace/bun-sqlite",
-    "version": "1.0.34",
+    "version": "1.0.35",
     "description": "SQLite manager for Bun",
     "author": "Benjamin Toby",
     "main": "dist/index.js",

@@ -141,7 +141,10 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
         : undefined;
     let queryString = (() => {
         let str = "SELECT";
-        if (genObject?.selectFields?.[0]) {
+        if (genObject?.select_sql) {
+            str += ` ${genObject.select_sql}`;
+        }
+        else if (genObject?.selectFields?.[0]) {
             if (genObject.join) {
                 str += ` ${genObject.selectFields
                     ?.map((fld) => typeof fld == "object"
@@ -212,7 +215,10 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
                         if (existingJoinTableNames.includes(joinTableName))
                             return null;
                         existingJoinTableNames.push(joinTableName);
-                        if (joinObj.selectFields) {
+                        if (joinObj.select_sql) {
+                            return joinObj.select_sql;
+                        }
+                        else if (joinObj.selectFields) {
                             return joinObj.selectFields
                                 .map((selectField) => {
                                 if (typeof selectField == "string") {

@@ -640,6 +640,10 @@ export type ServerQueryParam<T extends {
     group?: keyof T | ServerQueryParamGroupBy<T> | (keyof T | ServerQueryParamGroupBy<T>)[];
     countSubQueries?: ServerQueryParamsCount[];
     fullTextSearch?: ServerQueryParamFullTextSearch<T>;
+    /**
+     * Raw SQL to use as select
+     */
+    select_sql?: string;
     [key: string]: any;
 };
 /**
@@ -801,6 +805,10 @@ export type ServerQueryParamsJoin<Table extends string = string, Field extends o
         count?: boolean;
     })[];
     operator?: (typeof ServerQueryOperators)[number];
+    /**
+     * Raw SQL to use as join select
+     */
+    select_sql?: string;
 };
 /**
  * Defines how a root-table field maps to a join-table field in an `ON` clause.

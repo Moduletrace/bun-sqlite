@@ -711,6 +711,10 @@ export type ServerQueryParam<
         | (keyof T | ServerQueryParamGroupBy<T>)[];
     countSubQueries?: ServerQueryParamsCount[];
     fullTextSearch?: ServerQueryParamFullTextSearch<T>;
+    /**
+     * Raw SQL to use as select
+     */
+    select_sql?: string;
     [key: string]: any;
 };
 
@@ -894,6 +898,10 @@ export type ServerQueryParamsJoin<
           }
     )[];
     operator?: (typeof ServerQueryOperators)[number];
+    /**
+     * Raw SQL to use as join select
+     */
+    select_sql?: string;
 };
 
 /**

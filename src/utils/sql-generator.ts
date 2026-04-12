@@ -221,7 +221,9 @@ export default function sqlGenerator<
     let queryString = (() => {
         let str = "SELECT";
 
-        if (genObject?.selectFields?.[0]) {
+        if (genObject?.select_sql) {
+            str += ` ${genObject.select_sql}`;
+        } else if (genObject?.selectFields?.[0]) {
             if (genObject.join) {
                 str += ` ${genObject.selectFields
                     ?.map((fld) =>
@@ -310,7 +312,9 @@ export default function sqlGenerator<
                             return null;
                         existingJoinTableNames.push(joinTableName);
 
-                        if (joinObj.selectFields) {
+                        if (joinObj.select_sql) {
+                            return joinObj.select_sql;
+                        } else if (joinObj.selectFields) {
                             return joinObj.selectFields
                                 .map((selectField) => {
                                     if (typeof selectField == "string") {
