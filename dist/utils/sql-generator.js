@@ -383,7 +383,7 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
     }
     if (genObject?.limit && !count)
         queryString += ` LIMIT ${genObject.limit}`;
-    if (genObject?.offset && !count)
+    if ((genObject?.offset || genObject?.page) && !count)
         queryString += ` OFFSET ${genObject.offset}`;
     return {
         string: queryString,

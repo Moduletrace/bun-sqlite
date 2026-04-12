@@ -513,7 +513,7 @@ export default function sqlGenerator<
     }
 
     if (genObject?.limit && !count) queryString += ` LIMIT ${genObject.limit}`;
-    if (genObject?.offset && !count)
+    if ((genObject?.offset || genObject?.page) && !count)
         queryString += ` OFFSET ${genObject.offset}`;
 
     return {
