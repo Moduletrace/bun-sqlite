@@ -18,9 +18,8 @@ export default async function DbSelect({ table, query, count, targetId, }) {
         sqlObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
-            count,
         });
-        const sql = mysql.format(sqlObj.string, sqlObj.values);
+        let sql = mysql.format(sqlObj.string, sqlObj.values);
         const res = DbClient.query(sql);
         const batchRes = res.all();
         let resp = {
@@ -33,10 +32,17 @@ export default async function DbSelect({ table, query, count, targetId, }) {
             },
         };
         if (count) {
-            const count_val = count ? batchRes[0]?.["COUNT(*)"] : undefined;
+            let count_sql_object = sqlGenerator({
+                tableName: table,
+                genObject: finalQuery,
+                count,
+            });
+            let count_sql = mysql.format(count_sql_object.string, count_sql_object.values);
+            count_sql = `SELECT COUNT(*) FROM (${count_sql}) as c`;
+            const count_res = DbClient.query(count_sql).all();
+            const count_val = count_res[0]?.["COUNT(*)"];
             resp["count"] = Number(count_val);
-            delete resp.payload;
-            delete resp.singleRes;
+            resp["debug"]["count_sql"] = count_sql;
         }
         return resp;
     }

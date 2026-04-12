@@ -221,9 +221,7 @@ export default function sqlGenerator<
     let queryString = (() => {
         let str = "SELECT";
 
-        if (count) {
-            str += ` COUNT(*)`;
-        } else if (genObject?.selectFields?.[0]) {
+        if (genObject?.selectFields?.[0]) {
             if (genObject.join) {
                 str += ` ${genObject.selectFields
                     ?.map((fld) =>
@@ -295,7 +293,7 @@ export default function sqlGenerator<
             str += `, ${countSqls.join(",")}`;
         }
 
-        if (genObject?.join && !count) {
+        if (genObject?.join) {
             const existingJoinTableNames: string[] = [tableName];
 
             str +=
@@ -493,7 +491,7 @@ export default function sqlGenerator<
         return orderSrt;
     }
 
-    if (genObject?.order && !count) {
+    if (genObject?.order) {
         let orderSrt = ` ORDER BY`;
 
         if (Array.isArray(genObject.order)) {
@@ -514,7 +512,7 @@ export default function sqlGenerator<
 
     if (genObject?.limit && !count) queryString += ` LIMIT ${genObject.limit}`;
 
-    if (genObject?.offset && !count) {
+    if (genObject?.offset) {
         queryString += ` OFFSET ${genObject.offset}`;
     } else if (genObject?.page && genObject.limit && !count) {
         queryString += ` OFFSET ${(genObject.page - 1) * genObject.limit}`;

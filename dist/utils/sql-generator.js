@@ -141,10 +141,7 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
         : undefined;
     let queryString = (() => {
         let str = "SELECT";
-        if (count) {
-            str += ` COUNT(*)`;
-        }
-        else if (genObject?.selectFields?.[0]) {
+        if (genObject?.selectFields?.[0]) {
             if (genObject.join) {
                 str += ` ${genObject.selectFields
                     ?.map((fld) => typeof fld == "object"
@@ -201,7 +198,7 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
             }
             str += `, ${countSqls.join(",")}`;
         }
-        if (genObject?.join && !count) {
+        if (genObject?.join) {
             const existingJoinTableNames = [tableName];
             str +=
                 "," +
@@ -364,7 +361,7 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
         orderSrt += ` ${orderFields.join(", ")} ${order.strategy}`;
         return orderSrt;
     }
-    if (genObject?.order && !count) {
+    if (genObject?.order) {
         let orderSrt = ` ORDER BY`;
         if (Array.isArray(genObject.order)) {
             for (let i = 0; i < genObject.order.length; i++) {
@@ -383,7 +380,7 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
     }
     if (genObject?.limit && !count)
         queryString += ` LIMIT ${genObject.limit}`;
-    if (genObject?.offset && !count) {
+    if (genObject?.offset) {
         queryString += ` OFFSET ${genObject.offset}`;
     }
     else if (genObject?.page && genObject.limit && !count) {
