@@ -383,8 +383,12 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
     }
     if (genObject?.limit && !count)
         queryString += ` LIMIT ${genObject.limit}`;
-    if ((genObject?.offset || genObject?.page) && !count)
-        queryString += ` OFFSET ${genObject.offset || genObject?.page}`;
+    if (genObject?.offset && !count) {
+        queryString += ` OFFSET ${genObject.offset}`;
+    }
+    else if (genObject?.page && genObject.limit && !count) {
+        queryString += ` OFFSET ${genObject.page * genObject.limit}`;
+    }
     return {
         string: queryString,
         values: sqlSearhValues,
