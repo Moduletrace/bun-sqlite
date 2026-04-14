@@ -614,7 +614,7 @@ export declare const ServerQueryOperators: readonly ["AND", "OR"];
 /**
  * Supported comparison operators for server-side query generation.
  */
-export declare const ServerQueryEqualities: readonly ["EQUAL", "LIKE", "LIKE_RAW", "LIKE_LOWER", "LIKE_LOWER_RAW", "NOT LIKE", "NOT LIKE_RAW", "NOT_LIKE_LOWER", "NOT_LIKE_LOWER_RAW", "NOT EQUAL", "REGEXP", "FULLTEXT", "IN", "NOT IN", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL", "EXISTS", "NOT EXISTS", "GREATER THAN", "GREATER THAN OR EQUAL", "LESS THAN", "LESS THAN OR EQUAL", "MATCH", "MATCH_BOOLEAN"];
+export declare const ServerQueryEqualities: readonly ["EQUAL", "LIKE", "LIKE_RAW", "LIKE_LOWER", "LIKE_LOWER_RAW", "NOT LIKE", "NOT LIKE_RAW", "NOT_LIKE_LOWER", "NOT_LIKE_LOWER_RAW", "NOT EQUAL", "REGEXP", "FULLTEXT", "IN", "NOT IN", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL", "IS NOT", "EXISTS", "NOT EXISTS", "GREATER THAN", "GREATER THAN OR EQUAL", "LESS THAN", "LESS THAN OR EQUAL", "MATCH", "MATCH_BOOLEAN"];
 /**
  * Top-level query-builder input used to generate SELECT statements, joins,
  * grouping, pagination, and full-text search clauses.

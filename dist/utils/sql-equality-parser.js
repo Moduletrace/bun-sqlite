@@ -9,6 +9,8 @@ export default function sqlEqualityParser(eq) {
             return "NOT LIKE";
         case "NOT EQUAL":
             return "<>";
+        case "IS NOT":
+            return "IS NOT";
         case "IN":
             return "IN";
         case "NOT IN":

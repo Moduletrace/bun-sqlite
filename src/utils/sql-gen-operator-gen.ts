@@ -107,6 +107,11 @@ export default function sqlGenOperatorGen({
                 str: `${fieldName} != ${finalValue}`,
                 param: finalParams,
             };
+        } else if (equality == "IS NOT") {
+            return {
+                str: `${fieldName} IS NOT ${finalValue}`,
+                param: finalParams,
+            };
         } else if (equality) {
             return {
                 str: `${fieldName} ${sqlEqualityParser(

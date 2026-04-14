@@ -1,7 +1,7 @@
 import { ServerQueryEqualities } from "../types";
 
 export default function sqlEqualityParser(
-    eq: (typeof ServerQueryEqualities)[number]
+    eq: (typeof ServerQueryEqualities)[number],
 ): string {
     switch (eq) {
         case "EQUAL":
@@ -12,6 +12,8 @@ export default function sqlEqualityParser(
             return "NOT LIKE";
         case "NOT EQUAL":
             return "<>";
+        case "IS NOT":
+            return "IS NOT";
         case "IN":
             return "IN";
         case "NOT IN":

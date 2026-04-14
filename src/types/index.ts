@@ -670,6 +670,7 @@ export const ServerQueryEqualities = [
     "NOT BETWEEN",
     "IS NULL",
     "IS NOT NULL",
+    "IS NOT",
     "EXISTS",
     "NOT EXISTS",
     "GREATER THAN",
