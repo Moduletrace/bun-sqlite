@@ -313,7 +313,7 @@ export default function sqlGenerator<
                         existingJoinTableNames.push(joinTableName);
 
                         if (joinObj.group_concat) {
-                            let group_concat = `GROUP_CONCAT(${joinTableName}.${joinObj.group_concat.field}, ${joinObj.group_concat.separator || ","}) AS ${joinObj.group_concat.alias}`;
+                            let group_concat = `GROUP_CONCAT(${joinTableName}.${joinObj.group_concat.field}, '${joinObj.group_concat.separator || ","}') AS ${joinObj.group_concat.alias}`;
                             return group_concat;
                         } else if (joinObj.selectFields) {
                             return joinObj.selectFields
