@@ -36,26 +36,27 @@ export default function generateTypeDefinition({
 
         function typeMap(schemaType: BUN_SQLITE_FieldSchemaType) {
             if (schemaType.options && schemaType.options.length > 0) {
-                return schemaType.options
-                    .map((opt) =>
-                        schemaType.dataType?.match(/int/i) ||
-                        typeof opt == "number"
-                            ? `${opt}`
-                            : `"${opt}"`,
-                    )
-                    .join(" | ");
+                let opts = schemaType.options.map((opt) =>
+                    schemaType.dataType?.match(/int/i) || typeof opt == "number"
+                        ? `${opt}`
+                        : `"${opt}"`,
+                );
+
+                opts.push(`""`);
+
+                return opts.join(" | ");
             }
 
             if (schemaType.dataType?.match(/blob/i)) {
-                return "Float32Array<ArrayBuffer> | Buffer<ArrayBuffer>";
+                return `Float32Array<ArrayBuffer> | Buffer<ArrayBuffer> | null`;
             }
 
             if (schemaType.dataType?.match(/int|double|decimal|real/i)) {
-                return "number";
+                return `number | ""`;
             }
 
             if (schemaType.dataType?.match(/text|varchar|timestamp/i)) {
-                return "string";
+                return `string`;
             }
 
             if (schemaType.dataType?.match(/boolean/i)) {

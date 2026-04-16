@@ -29,7 +29,7 @@ export default function sqlInsertGenerator({ tableName, data, dbFullName, }) {
                                 ? value
                                 : null;
                     if (!finalValue) {
-                        queryValues.push("");
+                        queryValues.push(null);
                         return "?";
                     }
                     queryValues.push(finalValue);

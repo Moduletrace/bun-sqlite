@@ -47,7 +47,7 @@ export default function sqlInsertGenerator({
                                         : null;
 
                             if (!finalValue) {
-                                queryValues.push("");
+                                queryValues.push(null);
                                 return "?";
                             }
 
