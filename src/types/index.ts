@@ -715,7 +715,7 @@ export type ServerQueryParam<
     /**
      * Raw SQL to use as select
      */
-    select_sql?: string;
+    // select_sql?: string;
     [key: string]: any;
 };
 
@@ -902,7 +902,18 @@ export type ServerQueryParamsJoin<
     /**
      * Raw SQL to use as join select
      */
-    select_sql?: string;
+    // select_sql?: string;
+    /**
+     * Concatenate multiple matches from another table
+     */
+    group_concat?: {
+        field: string;
+        alias: string;
+        /**
+         * Separator. Default `,`
+         */
+        separator?: string;
+    };
 };
 
 /**

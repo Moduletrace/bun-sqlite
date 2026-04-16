@@ -643,7 +643,6 @@ export type ServerQueryParam<T extends {
     /**
      * Raw SQL to use as select
      */
-    select_sql?: string;
     [key: string]: any;
 };
 /**
@@ -808,7 +807,17 @@ export type ServerQueryParamsJoin<Table extends string = string, Field extends o
     /**
      * Raw SQL to use as join select
      */
-    select_sql?: string;
+    /**
+     * Concatenate multiple matches from another table
+     */
+    group_concat?: {
+        field: string;
+        alias: string;
+        /**
+         * Separator. Default `,`
+         */
+        separator?: string;
+    };
 };
 /**
  * Defines how a root-table field maps to a join-table field in an `ON` clause.

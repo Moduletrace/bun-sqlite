@@ -215,8 +215,9 @@ export default function sqlGenerator({ tableName, genObject, dbFullName, count }
                         if (existingJoinTableNames.includes(joinTableName))
                             return null;
                         existingJoinTableNames.push(joinTableName);
-                        if (joinObj.select_sql) {
-                            return joinObj.select_sql;
+                        if (joinObj.group_concat) {
+                            let group_concat = `GROUP_CONCAT(${joinTableName}.${joinObj.group_concat.field}, ${joinObj.group_concat.separator || ","}) AS ${joinObj.group_concat.alias}`;
+                            return group_concat;
                         }
                         else if (joinObj.selectFields) {
                             return joinObj.selectFields
