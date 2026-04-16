@@ -1,6 +1,10 @@
 import DbClient from ".";
 import _ from "lodash";
-import type { APIResponseObject, ServerQueryParam } from "../../types";
+import type {
+    APIResponseObject,
+    SQLInsertGenValueType,
+    ServerQueryParam,
+} from "../../types";
 import sqlGenerator from "../../utils/sql-generator";
 
 type Params<
@@ -22,7 +26,7 @@ export default async function DbUpdate<
     query,
     targetId,
 }: Params<Schema, Table>): Promise<APIResponseObject> {
-    let sqlObj: ReturnType<typeof sqlGenerator> | null = null;
+    let sqlObj: ReturnType<typeof sqlGenerator> = { string: "", values: [] };
 
     try {
         let finalQuery = query || {};
@@ -40,19 +44,19 @@ export default async function DbUpdate<
             );
         }
 
-        sqlObj = sqlGenerator({
+        const sqlQueryObj = sqlGenerator({
             tableName: table,
             genObject: finalQuery,
         });
 
-        let values: (string | number)[] = [];
+        let values: SQLInsertGenValueType[] = [];
 
-        const whereClause = sqlObj.string.match(/WHERE .*/)?.[0];
+        const whereClause = sqlQueryObj.string.match(/WHERE .*/)?.[0];
 
         if (whereClause) {
             let sql = `UPDATE ${table} SET`;
 
-            const finalData: { [k: string]: any } = {
+            const finalData: { [k: string]: SQLInsertGenValueType } = {
                 ...data,
                 updated_at: Date.now(),
             };
@@ -66,9 +70,8 @@ export default async function DbUpdate<
                 const isLast = i == keys.length - 1;
 
                 sql += ` ${key}=?`;
-                values.push(
-                    String(finalData[key as keyof { [k: string]: any }]),
-                );
+                const value = finalData[key];
+                values.push(value || null);
 
                 if (!isLast) {
                     sql += `,`;
@@ -76,7 +79,10 @@ export default async function DbUpdate<
             }
 
             sql += ` ${whereClause}`;
-            values = [...values, ...sqlObj.values];
+            values = [...values, ...sqlQueryObj.values];
+
+            sqlObj.string = sql;
+            sqlObj.values = values as any[];
 
             const res = DbClient.run(sql, values);
 
