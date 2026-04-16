@@ -27,19 +27,24 @@ export default function grabJoinFieldsFromQueryObject({ query }) {
 function grabSingleJoinData({ join, }) {
     let values = [];
     const join_select_fields = join?.selectFields;
-    if (join_select_fields) {
+    if (join_select_fields?.[0]) {
         for (let i = 0; i < join_select_fields.length; i++) {
             const select_field = join_select_fields[i];
             if (select_field) {
-                const value = join.match;
                 values.push({
+                    table: join.tableName,
                     field: typeof select_field == "object"
                         ? String(select_field.field)
                         : String(select_field),
-                    table: join.tableName,
                 });
             }
         }
+    }
+    if (join.group_concat) {
+        values.push({
+            table: join.tableName,
+            field: join.group_concat.field,
+        });
     }
     return values;
 }
