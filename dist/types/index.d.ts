@@ -1336,3 +1336,8 @@ export type BunSQLiteConfigReturn = {
  * Default fields automatically suggested for new tables.
  */
 export declare const DefaultFields: BUN_SQLITE_FieldSchemaType[];
+export type BunSQLiteQueryFieldValues<F extends string = string, T extends string = string> = {
+    field: F;
+    table?: T;
+};
+export type QueryRawValueType = string | number | null | undefined;

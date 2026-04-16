@@ -1,0 +1,73 @@
+import _ from "lodash";
+import type {
+    BunSQLiteQueryFieldValues,
+    ServerQueryParam,
+    ServerQueryParamsJoin,
+} from "../types";
+
+type Params<Q extends Record<string, any> = Record<string, any>> = {
+    query: ServerQueryParam<Q>;
+};
+
+export default function grabJoinFieldsFromQueryObject<
+    Q extends Record<string, any> = Record<string, any>,
+    F extends string = string,
+    T extends string = string,
+>({ query }: Params<Q>): BunSQLiteQueryFieldValues<F, T>[] {
+    const fields_values: BunSQLiteQueryFieldValues<F, T>[] = [];
+    const new_query = _.cloneDeep(query);
+
+    if (new_query.join) {
+        for (let i = 0; i < new_query.join.length; i++) {
+            const join = new_query.join[i];
+            if (!join) continue;
+
+            if (Array.isArray(join)) {
+                for (let i = 0; i < join.length; i++) {
+                    const single_join = join[i];
+                    fields_values.push(
+                        ...(grabSingleJoinData({
+                            join: single_join as ServerQueryParamsJoin,
+                        }) as BunSQLiteQueryFieldValues<F, T>[]),
+                    );
+                }
+            } else {
+                fields_values.push(
+                    ...(grabSingleJoinData({
+                        join: join as ServerQueryParamsJoin,
+                    }) as BunSQLiteQueryFieldValues<F, T>[]),
+                );
+            }
+        }
+    }
+
+    return fields_values;
+}
+
+function grabSingleJoinData({
+    join,
+}: {
+    join: ServerQueryParamsJoin;
+}): BunSQLiteQueryFieldValues[] {
+    let values: BunSQLiteQueryFieldValues[] = [];
+
+    const join_select_fields = join?.selectFields;
+
+    if (join_select_fields) {
+        for (let i = 0; i < join_select_fields.length; i++) {
+            const select_field = join_select_fields[i];
+            if (select_field) {
+                const value = join.match;
+                values.push({
+                    field:
+                        typeof select_field == "object"
+                            ? String(select_field.field)
+                            : String(select_field),
+                    table: join.tableName,
+                });
+            }
+        }
+    }
+
+    return values;
+}

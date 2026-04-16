@@ -1522,3 +1522,13 @@ export const DefaultFields: BUN_SQLITE_FieldSchemaType[] = [
             "The time when the record was updated. (Unix Timestamp)",
     },
 ];
+
+export type BunSQLiteQueryFieldValues<
+    F extends string = string,
+    T extends string = string,
+> = {
+    field: F;
+    table?: T;
+};
+
+export type QueryRawValueType = string | number | null | undefined;
