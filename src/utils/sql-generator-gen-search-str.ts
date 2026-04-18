@@ -112,10 +112,15 @@ export default function sqlGenGenSearchStr({
         if (operatorStrParam.str && operatorStrParam.param) {
             str = operatorStrParam.str;
             sqlSearhValues.push(operatorStrParam.param);
-        } else if (operatorStrParam.str) {
+        } else if (operatorStrParam.str && !operatorStrParam.str.match(/\?/)) {
             str = operatorStrParam.str;
+        } else {
+            sqlSearhValues.push(valueParsed || "");
         }
     }
+
+    console.log("str", str);
+    console.log("sqlSearhValues", sqlSearhValues);
 
     return { str, values: sqlSearhValues };
 }
