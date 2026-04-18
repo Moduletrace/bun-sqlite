@@ -98,22 +98,19 @@ export default function sqlGenGenQueryStr(params) {
                                 if (selectField.count) {
                                     aliasSelectField = `COUNT(${joinTableName}.${selectField.field})`;
                                 }
-                                if (selectField.sum) {
-                                    aliasSelectField = `SUM(${joinTableName}.${selectField.field})`;
+                                else if (selectField.sum) {
+                                    aliasSelectField = `SUM(${selectField.distinct ? "DISTINCT " : ""}${joinTableName}.${selectField.field})`;
                                 }
-                                if (selectField.average) {
+                                else if (selectField.average) {
                                     aliasSelectField = `AVERAGE(${joinTableName}.${selectField.field})`;
                                 }
-                                if (selectField.max) {
+                                else if (selectField.max) {
                                     aliasSelectField = `MAX(${joinTableName}.${selectField.field})`;
                                 }
-                                if (selectField.min) {
+                                else if (selectField.min) {
                                     aliasSelectField = `MIN(${joinTableName}.${selectField.field})`;
                                 }
-                                if (selectField.distinct) {
-                                    aliasSelectField = `DISTINCT ${joinTableName}.${selectField.field}`;
-                                }
-                                if (selectField.group_concat &&
+                                else if (selectField.group_concat &&
                                     selectField.alias) {
                                     return sqlGenGrabConcatStr({
                                         field: `${joinTableName}.${selectField.field}`,
@@ -123,6 +120,9 @@ export default function sqlGenGenQueryStr(params) {
                                         distinct: selectField.group_concat
                                             .distinct,
                                     });
+                                }
+                                else if (selectField.distinct) {
+                                    aliasSelectField = `DISTINCT ${joinTableName}.${selectField.field}`;
                                 }
                                 if (selectField.alias)
                                     aliasSelectField += ` AS ${selectField.alias}`;
