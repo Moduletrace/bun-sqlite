@@ -829,7 +829,7 @@ export type ServerQueryObject<
      */
     fieldName?: string;
     __query?: {
-        [key in keyof T]: Omit<ServerQueryObject<T>, "__query">;
+        [key: string]: Omit<ServerQueryObject<T>, "__query">;
     };
     vector?: boolean;
     /**

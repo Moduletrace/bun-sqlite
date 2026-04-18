@@ -748,7 +748,7 @@ export type ServerQueryObject<T extends object = {
      */
     fieldName?: string;
     __query?: {
-        [key in keyof T]: Omit<ServerQueryObject<T>, "__query">;
+        [key: string]: Omit<ServerQueryObject<T>, "__query">;
     };
     vector?: boolean;
     /**
