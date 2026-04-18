@@ -3,7 +3,10 @@ export default function sqlGenGrabConcatStr({ alias, field, separator = ",", dis
     if (distinct) {
         gc += `DISTINCT `;
     }
-    gc += `${field}, '${separator}'`;
+    gc += `${field}'`;
+    if (!distinct) {
+        gc += `, '${separator}`;
+    }
     gc += `)`;
     gc += ` AS ${alias}`;
     return gc;
