@@ -711,6 +711,17 @@ export type TableSelectFieldsObject<T extends {
 }> = {
     fieldName: keyof T;
     alias?: string;
+    count?: {
+        alias?: string;
+    };
+    sum?: TableSelectFieldsBasicDirective;
+    max?: TableSelectFieldsBasicDirective;
+    min?: TableSelectFieldsBasicDirective;
+    average?: TableSelectFieldsBasicDirective;
+    group_concat?: Omit<GroupConcatObject, "field">;
+};
+export type TableSelectFieldsBasicDirective = {
+    alias: string;
 };
 /**
  * Value wrapper used when a query condition needs per-value metadata such as a
@@ -793,11 +804,7 @@ export type ServerQueryParamsJoin<Table extends string = string, Field extends o
     alias?: string;
     tableName: Table;
     match?: ServerQueryParamsJoinMatchObject<Field> | ServerQueryParamsJoinMatchObject<Field>[];
-    selectFields?: (keyof Field | {
-        field: keyof Field;
-        alias?: string;
-        count?: boolean;
-    })[];
+    selectFields?: (keyof Field | SelectFieldObject<Field>)[];
     omitFields?: (keyof Field | {
         field: keyof Field;
         alias?: string;
@@ -810,14 +817,22 @@ export type ServerQueryParamsJoin<Table extends string = string, Field extends o
     /**
      * Concatenate multiple matches from another table
      */
-    group_concat?: {
-        field: string;
-        alias: string;
-        /**
-         * Separator. Default `,`
-         */
-        separator?: string;
-    };
+    group_concat?: GroupConcatObject;
+};
+export type GroupConcatObject = {
+    field: string;
+    alias: string;
+    /**
+     * Separator. Default `,`
+     */
+    separator?: string;
+};
+export type SelectFieldObject<Field extends object = {
+    [key: string]: any;
+}> = {
+    field: keyof Field;
+    alias?: string;
+    count?: boolean;
 };
 /**
  * Defines how a root-table field maps to a join-table field in an `ON` clause.

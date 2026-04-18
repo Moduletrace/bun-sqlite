@@ -782,6 +782,18 @@ export type TableSelectFieldsObject<
 > = {
     fieldName: keyof T;
     alias?: string;
+    count?: {
+        alias?: string;
+    };
+    sum?: TableSelectFieldsBasicDirective;
+    max?: TableSelectFieldsBasicDirective;
+    min?: TableSelectFieldsBasicDirective;
+    average?: TableSelectFieldsBasicDirective;
+    group_concat?: Omit<GroupConcatObject, "field">;
+};
+
+export type TableSelectFieldsBasicDirective = {
+    alias: string;
 };
 
 /**
@@ -882,14 +894,7 @@ export type ServerQueryParamsJoin<
     match?:
         | ServerQueryParamsJoinMatchObject<Field>
         | ServerQueryParamsJoinMatchObject<Field>[];
-    selectFields?: (
-        | keyof Field
-        | {
-              field: keyof Field;
-              alias?: string;
-              count?: boolean;
-          }
-    )[];
+    selectFields?: (keyof Field | SelectFieldObject<Field>)[];
     omitFields?: (
         | keyof Field
         | {
@@ -906,14 +911,22 @@ export type ServerQueryParamsJoin<
     /**
      * Concatenate multiple matches from another table
      */
-    group_concat?: {
-        field: string;
-        alias: string;
-        /**
-         * Separator. Default `,`
-         */
-        separator?: string;
-    };
+    group_concat?: GroupConcatObject;
+};
+
+export type GroupConcatObject = {
+    field: string;
+    alias: string;
+    /**
+     * Separator. Default `,`
+     */
+    separator?: string;
+};
+
+export type SelectFieldObject<Field extends object = { [key: string]: any }> = {
+    field: keyof Field;
+    alias?: string;
+    count?: boolean;
 };
 
 /**

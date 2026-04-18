@@ -1,4 +1,4 @@
-import type { ServerQueryParam } from "../types";
+import type { ServerQueryParam, SQLInsertGenValueType } from "../types";
 type Param<T extends {
     [key: string]: any;
 } = {
@@ -11,7 +11,7 @@ type Param<T extends {
 };
 type Return = {
     string: string;
-    values: (string | number)[];
+    values: SQLInsertGenValueType[];
 };
 /**
  * # SQL Query Generator

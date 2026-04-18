@@ -1,7 +1,7 @@
-import type { ServerQueryEqualities, ServerQueryObject } from "../types";
+import type { ServerQueryEqualities, ServerQueryObject, SQLInsertGenValueType } from "../types";
 type Params = {
     fieldName: string;
-    value?: string;
+    value?: SQLInsertGenValueType;
     equality?: (typeof ServerQueryEqualities)[number];
     queryObj: ServerQueryObject<{
         [key: string]: any;
@@ -10,7 +10,7 @@ type Params = {
 };
 type Return = {
     str?: string;
-    param?: string;
+    param?: SQLInsertGenValueType;
 };
 /**
  * # SQL Gen Operator Gen
