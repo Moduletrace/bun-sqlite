@@ -88,7 +88,5 @@ export default function sqlGenGenSearchStr({ queryObj, join, field, table_name, 
             sqlSearhValues.push(valueParsed || "");
         }
     }
-    console.log("str", str);
-    console.log("sqlSearhValues", sqlSearhValues);
     return { str, values: sqlSearhValues };
 }

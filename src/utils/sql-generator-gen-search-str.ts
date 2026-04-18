@@ -119,8 +119,5 @@ export default function sqlGenGenSearchStr({
         }
     }
 
-    console.log("str", str);
-    console.log("sqlSearhValues", sqlSearhValues);
-
     return { str, values: sqlSearhValues };
 }
