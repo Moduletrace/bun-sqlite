@@ -94,9 +94,36 @@ export default function sqlGenGenQueryStr(params) {
                                 return `${joinTableName}.${selectField}`;
                             }
                             else if (typeof selectField == "object") {
-                                let aliasSelectField = selectField.count
-                                    ? `COUNT(${joinTableName}.${selectField.field})`
-                                    : `${joinTableName}.${selectField.field}`;
+                                let aliasSelectField = `${joinTableName}.${selectField.field}`;
+                                if (selectField.count) {
+                                    aliasSelectField = `COUNT(${joinTableName}.${selectField.field})`;
+                                }
+                                if (selectField.sum) {
+                                    aliasSelectField = `SUM(${joinTableName}.${selectField.field})`;
+                                }
+                                if (selectField.average) {
+                                    aliasSelectField = `AVERAGE(${joinTableName}.${selectField.field})`;
+                                }
+                                if (selectField.max) {
+                                    aliasSelectField = `MAX(${joinTableName}.${selectField.field})`;
+                                }
+                                if (selectField.min) {
+                                    aliasSelectField = `MIN(${joinTableName}.${selectField.field})`;
+                                }
+                                if (selectField.distinct) {
+                                    aliasSelectField = `DISTINCT ${joinTableName}.${selectField.field}`;
+                                }
+                                if (selectField.group_concat &&
+                                    selectField.alias) {
+                                    return sqlGenGrabConcatStr({
+                                        field: `${joinTableName}.${selectField.field}`,
+                                        alias: selectField.alias,
+                                        separator: selectField.group_concat
+                                            .separator,
+                                        distinct: selectField.group_concat
+                                            .distinct,
+                                    });
+                                }
                                 if (selectField.alias)
                                     aliasSelectField += ` AS ${selectField.alias}`;
                                 return aliasSelectField;
@@ -135,22 +162,28 @@ export default function sqlGenGenQueryStr(params) {
                             if (Array.isArray(join.match)) {
                                 return ("(" +
                                     join.match
-                                        .map((mtch) => sqlGenGenJoinStr({
-                                        mtch,
-                                        join,
-                                        table_name,
-                                    }))
+                                        .map((mtch) => {
+                                        const { str, values } = sqlGenGenJoinStr({
+                                            mtch,
+                                            join,
+                                            table_name,
+                                        });
+                                        sqlSearhValues.push(...values);
+                                        return str;
+                                    })
                                         .join(join.operator
                                         ? ` ${join.operator} `
                                         : " AND ") +
                                     ")");
                             }
                             else if (typeof join.match == "object") {
-                                return sqlGenGenJoinStr({
+                                const { str, values } = sqlGenGenJoinStr({
                                     mtch: join.match,
                                     join,
                                     table_name,
                                 });
+                                sqlSearhValues.push(...values);
+                                return str;
                             }
                         })());
                 })

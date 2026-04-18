@@ -81,6 +81,25 @@ export const ServerQueryEqualities = [
     "MATCH",
     "MATCH_BOOLEAN",
 ];
+export const SQlComparisons = [
+    ">",
+    "<>",
+    "<",
+    "=",
+    ">=",
+    "<=",
+    "!=",
+    "IS NOT",
+    "IS",
+    "IS NULL",
+    "IS NOT NULL",
+    "IN",
+    "NOT IN",
+    "LIKE",
+    "NOT LIKE",
+    "GLOB",
+    "NOT GLOB",
+];
 /**
  * Uppercase HTTP methods supported by the CRUD helpers.
  */

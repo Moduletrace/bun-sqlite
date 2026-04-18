@@ -61,6 +61,14 @@ export default function sqlGenGenSearchStr({ queryObj, join, field, table_name, 
             }
         }
     }
+    else if (queryObj.raw_equality && queryObj.value) {
+        str = `${finalFieldName} ${queryObj.raw_equality} ?`;
+        sqlSearhValues.push(queryObj.value);
+    }
+    else if (queryObj.between) {
+        str = `${finalFieldName} BETWEEN ? AND ?`;
+        sqlSearhValues.push(queryObj.between.min, queryObj.between.max);
+    }
     else {
         const valueParsed = queryObj.value ? queryObj.value : undefined;
         const operatorStrParam = sqlGenOperatorGen({

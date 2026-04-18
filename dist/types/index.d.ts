@@ -228,12 +228,12 @@ export interface BUN_SQLITE_ForeignKeyType {
  * Describes a table index and the fields it covers.
  */
 export interface BUN_SQLITE_IndexSchemaType {
-    id?: string | number;
+    /**
+     * Name of the index as it would appear on schema. Eg.
+     * `idx_user_id_index`
+     */
     indexName?: string;
-    indexType?: (typeof IndexTypes)[number];
-    indexTableFields?: BUN_SQLITE_IndexTableFieldType[];
-    alias?: string;
-    newTempIndex?: boolean;
+    indexTableFields?: string[];
 }
 /**
  * Describes a multi-field uniqueness rule for a table.
@@ -714,11 +714,12 @@ export type TableSelectFieldsObject<T extends {
     count?: {
         alias?: string;
     };
-    sum?: TableSelectFieldsBasicDirective;
-    max?: TableSelectFieldsBasicDirective;
-    min?: TableSelectFieldsBasicDirective;
-    average?: TableSelectFieldsBasicDirective;
+    sum?: boolean;
+    max?: boolean;
+    min?: boolean;
+    average?: boolean;
     group_concat?: Omit<GroupConcatObject, "field">;
+    distinct?: boolean;
 };
 export type TableSelectFieldsBasicDirective = {
     alias: string;
@@ -746,7 +747,7 @@ export type ServerQueryObjectValue = string | number | ServerQueryValuesObject |
  */
 export type ServerQueryObject<T extends object = {
     [key: string]: any;
-}, K extends string = string> = {
+}, K extends string = string> = SQLComparisonsParams & {
     value?: ServerQueryObjectValue;
     nullValue?: boolean;
     notNullValue?: boolean;
@@ -826,6 +827,7 @@ export type GroupConcatObject = {
      * Separator. Default `,`
      */
     separator?: string;
+    distinct?: boolean;
 };
 export type SelectFieldObject<Field extends object = {
     [key: string]: any;
@@ -833,13 +835,29 @@ export type SelectFieldObject<Field extends object = {
     field: keyof Field;
     alias?: string;
     count?: boolean;
+    sum?: boolean;
+    max?: boolean;
+    min?: boolean;
+    average?: boolean;
+    group_concat?: Pick<GroupConcatObject, "separator" | "distinct">;
+    distinct?: boolean;
+};
+export declare const SQlComparisons: readonly [">", "<>", "<", "=", ">=", "<=", "!=", "IS NOT", "IS", "IS NULL", "IS NOT NULL", "IN", "NOT IN", "LIKE", "NOT LIKE", "GLOB", "NOT GLOB"];
+export type SQLBetween = {
+    min: SQLInsertGenValueType;
+    max: SQLInsertGenValueType;
+};
+export type SQLComparisonsParams = {
+    raw_equality?: (typeof SQlComparisons)[number];
+    between?: SQLBetween;
+    not_between?: SQLBetween;
 };
 /**
  * Defines how a root-table field maps to a join-table field in an `ON` clause.
  */
 export type ServerQueryParamsJoinMatchObject<Field extends object = {
     [key: string]: any;
-}> = {
+}> = SQLComparisonsParams & {
     /** Field name from the **Root Table** */
     source?: string | ServerQueryParamsJoinMatchSourceTargetObject;
     /** Field name from the **Join Table** */

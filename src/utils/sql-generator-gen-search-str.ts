@@ -1,7 +1,9 @@
 import type {
+    QueryRawValueType,
     ServerQueryParamsJoin,
     ServerQueryQueryObject,
     ServerQueryValuesObject,
+    SQLInsertGenValueType,
 } from "../types";
 import sqlGenOperatorGen from "./sql-gen-operator-gen";
 
@@ -18,7 +20,7 @@ export default function sqlGenGenSearchStr({
     field,
     table_name,
 }: Param) {
-    let sqlSearhValues = [];
+    let sqlSearhValues: SQLInsertGenValueType[] = [];
 
     const finalFieldName = (() => {
         if (queryObj?.tableName) {
@@ -91,6 +93,12 @@ export default function sqlGenGenSearchStr({
                 sqlSearhValues.push(operatorStrParam.param);
             }
         }
+    } else if (queryObj.raw_equality && queryObj.value) {
+        str = `${finalFieldName} ${queryObj.raw_equality} ?`;
+        sqlSearhValues.push(queryObj.value);
+    } else if (queryObj.between) {
+        str = `${finalFieldName} BETWEEN ? AND ?`;
+        sqlSearhValues.push(queryObj.between.min, queryObj.between.max);
     } else {
         const valueParsed = queryObj.value ? queryObj.value : undefined;
 

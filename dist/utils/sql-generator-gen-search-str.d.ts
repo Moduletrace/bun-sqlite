@@ -1,4 +1,4 @@
-import type { ServerQueryParamsJoin, ServerQueryQueryObject } from "../types";
+import type { ServerQueryParamsJoin, ServerQueryQueryObject, SQLInsertGenValueType } from "../types";
 type Param = {
     queryObj: ServerQueryQueryObject[string];
     join?: (ServerQueryParamsJoin | ServerQueryParamsJoin[] | undefined)[];
@@ -7,6 +7,6 @@ type Param = {
 };
 export default function sqlGenGenSearchStr({ queryObj, join, field, table_name, }: Param): {
     str: string;
-    values: (string | number | Float32Array<ArrayBuffer> | Buffer<ArrayBuffer>)[];
+    values: SQLInsertGenValueType[];
 };
 export {};

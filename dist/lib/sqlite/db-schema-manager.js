@@ -406,10 +406,9 @@ class SQLiteSchemaManager {
             if (!existingIndexes.includes(index.indexName)) {
                 console.log(`Creating index: ${index.indexName}`);
                 const fields = index.indexTableFields
-                    .map((f) => `"${f.value}"`)
+                    .map((f) => `"${f}"`)
                     .join(", ");
-                const unique = index.indexType === "regular" ? "" : ""; // SQLite doesn't have FULLTEXT in CREATE INDEX
-                this.db.run(`CREATE ${unique}INDEX "${index.indexName}" ON "${table.tableName}" (${fields})`);
+                this.db.run(`CREATE INDEX "${index.indexName}" ON "${table.tableName}" (${fields})`);
             }
         }
     }
