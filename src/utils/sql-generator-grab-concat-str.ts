@@ -17,11 +17,12 @@ export default function sqlGenGrabConcatStr({
         gc += `DISTINCT `;
     }
 
-    gc += `${field}'`;
+    gc += `${field}`;
 
     if (!distinct) {
-        gc += `, '${separator}`;
+        gc += `, '${separator}'`;
     }
+
     gc += `)`;
     gc += ` AS ${alias}`;
 
