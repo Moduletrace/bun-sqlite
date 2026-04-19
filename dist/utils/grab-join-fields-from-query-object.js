@@ -1,5 +1,5 @@
 import _ from "lodash";
-export default function grabJoinFieldsFromQueryObject({ query }) {
+export default function grabJoinFieldsFromQueryObject({ query, ignore_select_fields, }) {
     const fields_values = [];
     const new_query = _.cloneDeep(query);
     if (new_query.join) {
@@ -12,21 +12,26 @@ export default function grabJoinFieldsFromQueryObject({ query }) {
                     const single_join = join[i];
                     fields_values.push(...grabSingleJoinData({
                         join: single_join,
+                        ignore_select_fields,
                     }));
                 }
             }
             else {
                 fields_values.push(...grabSingleJoinData({
                     join: join,
+                    ignore_select_fields,
                 }));
             }
         }
     }
     return fields_values;
 }
-function grabSingleJoinData({ join, }) {
+function grabSingleJoinData({ join, ignore_select_fields, }) {
     let values = [];
     const join_select_fields = join?.selectFields;
+    if (!join_select_fields?.[0] && !ignore_select_fields) {
+        throw new Error(`\`selectFields\` required in joins. To ignore this error, pass the \`ignore_select_fields\` parameter`);
+    }
     if (join_select_fields?.[0]) {
         for (let i = 0; i < join_select_fields.length; i++) {
             const select_field = join_select_fields[i];
