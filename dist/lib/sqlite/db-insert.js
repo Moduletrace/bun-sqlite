@@ -5,9 +5,9 @@ export default async function DbInsert({ table, data, update_on_duplicate, }) {
     let sqlObj = null;
     try {
         const finalData = data.map((d) => ({
-            ...d,
             created_at: Date.now(),
             updated_at: Date.now(),
+            ...d,
         }));
         sqlObj =
             sqlInsertGenerator({

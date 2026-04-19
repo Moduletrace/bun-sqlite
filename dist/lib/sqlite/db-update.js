@@ -23,8 +23,8 @@ export default async function DbUpdate({ table, data, query, targetId, }) {
         if (whereClause) {
             let sql = `UPDATE ${table} SET`;
             const finalData = {
-                ...data,
                 updated_at: Date.now(),
+                ...data,
             };
             const keys = Object.keys(finalData);
             for (let i = 0; i < keys.length; i++) {

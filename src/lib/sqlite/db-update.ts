@@ -57,8 +57,8 @@ export default async function DbUpdate<
             let sql = `UPDATE ${table} SET`;
 
             const finalData: { [k: string]: SQLInsertGenValueType } = {
-                ...data,
                 updated_at: Date.now(),
+                ...data,
             };
 
             const keys = Object.keys(finalData);

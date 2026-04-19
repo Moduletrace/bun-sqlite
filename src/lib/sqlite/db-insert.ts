@@ -24,9 +24,9 @@ export default async function DbInsert<
 
     try {
         const finalData: { [k: string]: any }[] = data.map((d) => ({
-            ...d,
             created_at: Date.now(),
             updated_at: Date.now(),
+            ...d,
         }));
 
         sqlObj =
