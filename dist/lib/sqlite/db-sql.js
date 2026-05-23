@@ -2,9 +2,10 @@ import DbClient from ".";
 import _ from "lodash";
 export default async function DbSQL({ sql, values }) {
     try {
-        const res = sql.match(/^select/i)
-            ? DbClient.query(sql).all(...(values || []))
-            : DbClient.run(sql, values || []);
+        const trimmed_sql = sql.trim();
+        const res = trimmed_sql.match(/^select/i)
+            ? DbClient.query(trimmed_sql).all(...(values || []))
+            : DbClient.run(trimmed_sql, values || []);
         return {
             success: true,
             payload: Array.isArray(res) ? res : undefined,
@@ -17,7 +18,7 @@ export default async function DbSQL({ sql, values }) {
                 },
             debug: {
                 sqlObj: {
-                    sql,
+                    sql: trimmed_sql,
                     values,
                 },
                 sql,

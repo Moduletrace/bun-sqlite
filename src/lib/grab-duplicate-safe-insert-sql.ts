@@ -3,7 +3,7 @@ import init from "../functions/init";
 type Params = {
     sql: string;
     table: string;
-    data: any[];
+    data: any | any[];
 };
 
 export default async function ({ sql: passed_sql, table, data }: Params) {
@@ -13,9 +13,9 @@ export default async function ({ sql: passed_sql, table, data }: Params) {
     const now = Date.now();
 
     if (table_schema?.tableName) {
-        const set_sql_arr = Object.keys(data[0]).map(
-            (field) => `${field} = excluded.${field}`,
-        );
+        const set_sql_arr = Object.keys(
+            Array.isArray(data) ? data[0] : data,
+        ).map((field) => `${field} = excluded.${field}`);
 
         set_sql_arr.push(`updated_at = ${now}`);
 

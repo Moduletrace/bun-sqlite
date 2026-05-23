@@ -308,6 +308,9 @@ class SQLiteSchemaManager {
         if (field.unique && !field.primaryKey) {
             parts.push("UNIQUE");
         }
+        if (field.vectorDistanceMetric) {
+            parts.push(`distance_metric=${field.vectorDistanceMetric}`);
+        }
         // Default value
         if (field.defaultValue !== undefined) {
             if (typeof field.defaultValue === "string") {

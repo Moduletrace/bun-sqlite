@@ -212,6 +212,10 @@ WHERE embedding MATCH ? AND k = 1;
 ```
      */
     sideCar?: boolean;
+    /**
+     * Eg. `cosine`
+     */
+    vectorDistanceMetric?: string;
 } & {
     [key in (typeof TextFieldTypesArray)[number]["value"]]?: boolean;
 };

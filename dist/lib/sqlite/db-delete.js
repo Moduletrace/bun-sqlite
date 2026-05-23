@@ -21,6 +21,7 @@ export default async function DbDelete({ table, query, targetId, }) {
         const whereClause = sqlObj.string.match(/WHERE .*/)?.[0];
         if (whereClause) {
             let sql = `DELETE FROM ${table} ${whereClause}`;
+            sqlObj.string = sql;
             const res = DbClient.run(sql, sqlObj.values);
             return {
                 success: Boolean(res.changes),

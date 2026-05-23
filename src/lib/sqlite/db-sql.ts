@@ -11,9 +11,11 @@ export default async function DbSQL<
     T extends { [k: string]: any } = { [k: string]: any },
 >({ sql, values }: Params): Promise<APIResponseObject<T>> {
     try {
-        const res = sql.match(/^select/i)
-            ? DbClient.query(sql).all(...(values || []))
-            : DbClient.run(sql, values || []);
+        const trimmed_sql = sql.trim();
+
+        const res = trimmed_sql.match(/^select/i)
+            ? DbClient.query(trimmed_sql).all(...(values || []))
+            : DbClient.run(trimmed_sql, values || []);
 
         return {
             success: true,
@@ -27,7 +29,7 @@ export default async function DbSQL<
                   },
             debug: {
                 sqlObj: {
-                    sql,
+                    sql: trimmed_sql,
                     values,
                 },
                 sql,

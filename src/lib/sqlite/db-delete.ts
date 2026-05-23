@@ -48,6 +48,8 @@ export default async function DbDelete<
         if (whereClause) {
             let sql = `DELETE FROM ${table} ${whereClause}`;
 
+            sqlObj.string = sql;
+
             const res = DbClient.run(sql, sqlObj.values);
 
             return {
