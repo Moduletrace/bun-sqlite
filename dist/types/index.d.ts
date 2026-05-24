@@ -1370,6 +1370,10 @@ export type BunSQLiteConfig = {
      * definition export. Example `db_types.ts` or `types/db_types.ts`
      */
     typedef_file_path?: string;
+    /**
+     * Whether to enable `WAL` mode
+     */
+    wal_mode?: boolean;
 };
 /**
  * Resolved Bun SQLite config paired with the loaded database schema.

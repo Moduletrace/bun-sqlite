@@ -14,4 +14,7 @@ const DbClient = new Database(db_file_path, {
     create: true,
 });
 sqliteVec.load(DbClient);
+if (config.wal_mode) {
+    DbClient.run("PRAGMA journal_mode = WAL;");
+}
 export default DbClient;
